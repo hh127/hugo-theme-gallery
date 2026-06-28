@@ -160,6 +160,14 @@
           style="aspect-ratio: {{ $finalWidth }} / {{ $finalHeight }}">
           <figure style="background-color: {{ $bgColor }}; aspect-ratio: {{ $finalWidth }} / {{ $finalHeight }}">
             <img class="lazyload" width="{{ $finalWidth }}" height="{{ $finalHeight }}" data-src="{{ $finalThumbUrl }}" alt="{{ $item.Title }}" />
+            {{ if $item.Title }}
+              <figcaption class="gallery-caption">
+                <span class="caption-title">{{ $item.Title }}</span>
+                {{ if $item.Camera }}
+                  <span class="caption-camera">{{ $item.Camera }}</span>
+                {{ end }}
+              </figcaption>
+            {{ end }}
           </figure>
           <meta itemprop="contentUrl" content="{{ $finalFullUrl }}" />
           {{ with site.Params.Author }}
