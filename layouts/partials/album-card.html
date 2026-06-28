@@ -1,16 +1,17 @@
 {{ $gallery := partial "get-gallery.html" . }}
 {{ with $gallery }}
-  <a class="card" href="{{ .page.RelPermalink }}" title="{{ .page.Title }}">
-    <figure style="background-color: {{ .color }}">
-      <img class="lazyload" width="{{ .thumbnail.Width }}" height="{{ .thumbnail.Height }}" data-src="{{ .thumbnail.RelPermalink }}" alt="{{ .page.Title }}" />
+  {{ $g := . }}
+  <a class="card" href="{{ $g.page.RelPermalink }}" title="{{ $g.page.Title }}">
+    <figure style="background-color: {{ $g.color }}">
+      <img class="lazyload" width="{{ $g.thumbnail.Width }}" height="{{ $g.thumbnail.Height }}" data-src="{{ $g.thumbnail.RelPermalink }}" alt="{{ $g.page.Title }}" />
     </figure>
     <div>
-      <h2>{{ .page.Title }}</h2>
+      <h2>{{ $g.page.Title }}</h2>
       <p>
-        {{ if gt .albumCount 0 }}
-          {{ T "albumCount" (dict "count" (.albumCount | lang.FormatNumber 0) "photoCount" (.imageCount | lang.FormatNumber 0 | lang.Translate "photoCount")) }}
+        {{ if gt $g.albumCount 0 }}
+          {{ T "albumCount" (dict "count" ($g.albumCount | lang.FormatNumber 0) "photoCount" ($g.imageCount | lang.FormatNumber 0 | lang.Translate "photoCount")) }}
         {{ else }}
-          {{ T "photoCount" (.imageCount | lang.FormatNumber 0) }}
+          {{ T "photoCount" ($g.imageCount | lang.FormatNumber 0) }}
         {{ end }}
       </p>
     </div>

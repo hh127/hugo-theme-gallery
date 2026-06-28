@@ -1,27 +1,61 @@
 {{ $gallery := "" }}
-{{ $images :=  where (.Resources.ByType "image") "Params.hidden" "ne" true }}
-{{ if gt (len $images) 0 }}
-  {{ $covers := where (.Resources.ByType "image") "Params.cover" "eq" true }}
-  {{ $cover := "" }}
-  {{ if ge (len $covers) 0 }}
-    {{ $cover = index $covers 0 }}
-  {{ end }}
-  {{ $featured := $cover | default ((.Resources.ByType "image").GetMatch (.Params.featured_image | default "*feature*")) | default (index $images 0) }}
-  {{ $thumbnail := $featured.Filter (slice images.AutoOrient (images.Process "fit 600x600")) }}
-  {{ $color := index $thumbnail.Colors 0 | default "transparent" }}
+
+{{/* 检查本地图片资源 */}}
+{{ $localImages := where (.Resources.ByType "image") "Params.hidden" "ne" true }}
+{{/* 检查 front matter 中的远程图片列表 */}}
+{{ $remoteImages := .Params.remote_images | default slice }}
+
+{{ $totalImages := add (len $localImages) (len $remoteImages) }}
+
+{{ if gt $totalImages 0 }}
+  {{ $thumbnail := "" }}
+  {{ $color := "transparent" }}
   {{ $imageCount := 0 }}
   {{ $albumCount := 0 }}
-  {{ if .IsPage }}
-    {{ $imageCount = len $images }}
+
+  {{/* 优先使用远程图片作为封面 */}}
+  {{ with $remoteImages }}
+    {{ $firstUrl := index . 0 }}
+    {{ $remoteRes := resources.GetRemote $firstUrl }}
+    {{ if $remoteRes }}
+      {{/* 生成极小缩略图提取主色调 */}}
+      {{ $colorThumb := $remoteRes.Filter (slice images.AutoOrient (images.Process "fit 10x10")) }}
+      {{ $color = index $colorThumb.Colors 0 | default "#333" }}
+      {{/* 使用 remoteRes 作为缩略图 */}}
+      {{ $thumbnail = $remoteRes.Filter (slice images.AutoOrient (images.Process "fit 600x600")) }}
+    {{ else }}
+      {{/* 远程图片获取失败，使用占位 */}}
+      {{ $thumbnail = dict "RelPermalink" $firstUrl "Width" 600 "Height" 400 }}
+    {{ end }}
+    {{ $imageCount = len $remoteImages }}
   {{ else }}
+    {{/* 使用本地图片 */}}
+    {{ $covers := where (.Resources.ByType "image") "Params.cover" "eq" true }}
+    {{ $cover := "" }}
+    {{ if ge (len $covers) 0 }}
+      {{ $cover = index $covers 0 }}
+    {{ end }}
+    {{ $featured := $cover | default ((.Resources.ByType "image").GetMatch (.Params.featured_image | default "*feature*")) | default (index $localImages 0) }}
+    {{ $thumbnail = $featured.Filter (slice images.AutoOrient (images.Process "fit 600x600")) }}
+    {{ $color = index $thumbnail.Colors 0 | default "transparent" }}
+    {{ $imageCount = len $localImages }}
+  {{ end }}
+
+  {{ if .IsPage }}
+    {{/* 单个相册 */}}
+  {{ else }}
+    {{/* 分类页：统计子相册 */}}
     {{ range where .RegularPagesRecursive "Params.private" "ne" true }}
       {{ $albumCount = add $albumCount 1 }}
-      {{ $imageCount = add $imageCount (len (where (.Resources.ByType "image") "Params.hidden" "ne" true)) }}
+      {{ $localSub := len (where (.Resources.ByType "image") "Params.hidden" "ne" true) }}
+      {{ $extSub := len (.Params.remote_images | default slice) }}
+      {{ $imageCount = add $imageCount (add $localSub $extSub) }}
     {{ end }}
   {{ end }}
+
   {{ $gallery = dict
     "page" $
-    "images" $images
+    "images" $localImages
     "thumbnail" $thumbnail
     "color" $color
     "albumCount" $albumCount
