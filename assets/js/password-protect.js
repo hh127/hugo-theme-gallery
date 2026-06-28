@@ -1,4 +1,4 @@
-// 密码保护功能
+// 密码保护功能 - 沉浸式版本
 async function sha256(message) {
   const msgBuffer = new TextEncoder().encode(message);
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -14,7 +14,7 @@ function initPasswordProtect() {
   const errorMsg = document.getElementById('error-msg');
   
   if (!lockScreen || !galleryWrapper) return;
-  
+
   // 获取存储的密码哈希
   const storedHash = lockScreen.dataset.passwordHash;
   
@@ -26,7 +26,6 @@ function initPasswordProtect() {
     // 已验证，直接显示画廊
     lockScreen.style.display = 'none';
     galleryWrapper.style.display = '';
-    // 多次触发 resize 确保 gallery.js 能正确计算布局
     triggerGalleryResize();
     return;
   }
@@ -34,10 +33,23 @@ function initPasswordProtect() {
   // 未验证，隐藏画廊并显示锁屏
   galleryWrapper.style.display = 'none';
   
+  // 预加载背景图片
+  const bgImage = lockScreen.dataset.bgImage;
+  if (bgImage) {
+    const bgElement = lockScreen.querySelector('.lock-bg');
+    if (bgElement) {
+      const img = new Image();
+      img.onload = function() {
+        bgElement.style.opacity = '1';
+      };
+      img.src = bgImage;
+    }
+  }
+  
   async function verifyPassword() {
     const password = passwordInput.value;
     if (!password) {
-      errorMsg.textContent = '请输入密码';
+      showError('请输入密码');
       return;
     }
     
@@ -45,17 +57,42 @@ function initPasswordProtect() {
     if (hash === storedHash) {
       // 密码正确
       sessionStorage.setItem('gallery_' + pageId, 'true');
-      lockScreen.style.display = 'none';
-      galleryWrapper.style.display = '';
-      errorMsg.textContent = '';
       
-      // 多次触发 resize 确保 gallery.js 能正确计算布局
-      triggerGalleryResize();
+      // 添加成功动画
+      const container = lockScreen.querySelector('.lock-container');
+      if (container) {
+        container.classList.add('success');
+      }
+      
+      // 延迟后淡出解锁
+      setTimeout(() => {
+        lockScreen.classList.add('unlocking');
+        setTimeout(() => {
+          lockScreen.style.display = 'none';
+          galleryWrapper.style.display = '';
+          errorMsg.textContent = '';
+          triggerGalleryResize();
+        }, 500);
+      }, 400);
     } else {
-      errorMsg.textContent = '密码错误，请重试';
+      showError('密码错误，请重试');
       passwordInput.value = '';
       passwordInput.focus();
+      
+      // 抖动动画
+      const container = lockScreen.querySelector('.lock-container');
+      if (container) {
+        container.style.animation = 'none';
+        container.offsetHeight; // 触发重排
+        container.style.animation = 'shake 0.5s ease';
+      }
     }
+  }
+  
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.style.opacity = '1';
+    errorMsg.style.transform = 'translateY(0)';
   }
   
   submitBtn.addEventListener('click', verifyPassword);
@@ -64,12 +101,13 @@ function initPasswordProtect() {
   });
   
   // 自动聚焦
-  passwordInput.focus();
+  setTimeout(() => {
+    passwordInput.focus();
+  }, 300);
 }
 
 // 触发 gallery 重新计算布局
 function triggerGalleryResize() {
-  // 多次触发 resize，确保 gallery.js 能正确计算
   setTimeout(() => {
     window.dispatchEvent(new Event('resize'));
   }, 50);
@@ -79,6 +117,24 @@ function triggerGalleryResize() {
   setTimeout(() => {
     window.dispatchEvent(new Event('resize'));
   }, 500);
+  
+  // 直接加载所有懒加载图片
+  setTimeout(() => {
+    const lazyImages = document.querySelectorAll('img.lazyload[data-src]');
+    lazyImages.forEach(function(img) {
+      const src = img.getAttribute('data-src');
+      if (src) {
+        img.src = src;
+        img.classList.remove('lazyload');
+        img.classList.add('lazyloaded');
+        img.dispatchEvent(new Event('lazyloaded'));
+      }
+    });
+    if (window.lazySizes) {
+      window.lazySizes.update();
+    }
+    window.dispatchEvent(new Event('scroll'));
+  }, 150);
 }
 
 // 确保在 DOM 加载完成后初始化
