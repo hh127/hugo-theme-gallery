@@ -130,10 +130,12 @@ function triggerGalleryResize() {
         img.dispatchEvent(new Event('lazyloaded'));
       }
     });
-    if (window.lazySizes) {
-      window.lazySizes.update();
+    // 触发 lazysizes 重新检测
+    if (window.lazySizes && typeof window.lazySizes.check === 'function') {
+      window.lazySizes.check();
     }
     window.dispatchEvent(new Event('scroll'));
+    window.dispatchEvent(new Event('resize'));
   }, 150);
 }
 

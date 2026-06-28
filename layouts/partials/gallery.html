@@ -4,7 +4,29 @@
       {{ $images := slice }}
       {{ $publishResources := default true .Params.build.publishResources }}
       
-      {{/* 1. 处理原有的本地图片 */}}
+      {{/* 构建 front matter 图片信息的映射 */}}
+      {{ $imageMeta := dict }}
+      {{ with .Params.images }}
+        {{ range . }}
+          {{ $src := .src | default "" }}
+          {{ if $src }}
+            {{ $meta := dict
+              "title" (.title | default "")
+              "description" (.description | default "")
+              "camera" (.params.camera | default "")
+              "lens" (.params.lens | default "")
+              "iso" (.params.iso | default "")
+              "aperture" (.params.aperture | default "")
+              "exposure" (.params.exposure | default "")
+              "focal" (.params.focal | default "")
+              "date" (.params.date | default "")
+            }}
+            {{ $imageMeta = merge $imageMeta (dict $src $meta) }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+
+      {{/* 1. 处理本地图片 */}}
       {{ $albumName := .File.Dir | path.Base }}
       {{ $exifData := hugo.Data.exif }}
       {{ $albumExif := false }}
@@ -20,8 +42,24 @@
         {{ $aperture := "" }}
         {{ $exposure := "" }}
         {{ $focalLength := "" }}
+        {{ $description := "" }}
         
-        {{ if $albumExif }}
+        {{/* 从 front matter 的 images 列表中查找元数据 */}}
+        {{ $meta := index $imageMeta $image.Name }}
+        {{ with $meta }}
+          {{ $title = .title }}
+          {{ $description = .description }}
+          {{ $camera = .camera }}
+          {{ $lens = .lens }}
+          {{ $iso = .iso }}
+          {{ $aperture = .aperture }}
+          {{ $exposure = .exposure }}
+          {{ $focalLength = .focal }}
+          {{ $date = .date }}
+        {{ end }}
+        
+        {{/* 从 EXIF JSON 数据中读取（备选） */}}
+        {{ if and $albumExif (not $camera) }}
           {{ $imageExif := index $albumExif $image.Name }}
           {{ with $imageExif }}
             {{ $camera = .camera }}
@@ -34,12 +72,16 @@
           {{ end }}
         {{ end }}
         
-        {{ with $image.Exif }}
-          {{ with .Tags.ImageDescription }}
-            {{ $title = . }}
+        {{/* 从 Hugo EXIF 读取标题（备选） */}}
+        {{ if not $title }}
+          {{ with $image.Exif }}
+            {{ with .Tags.ImageDescription }}
+              {{ $title = . }}
+            {{ end }}
           {{ end }}
         {{ end }}
         
+        {{/* front matter 覆盖 */}}
         {{ if ne $image.Title $image.Name }}
           {{ $title = $image.Title }}
         {{ end }}
@@ -50,6 +92,7 @@
         {{ $images = $images | append (dict
           "Name" $image.Name
           "Title" $title
+          "Description" $description
           "Date" $date
           "Camera" $camera
           "Lens" $lens
@@ -63,38 +106,53 @@
           ) }}
       {{ end }}
 
-      {{/* 2. 新增：处理通过链接引入的远程图片 */}}
+      {{/* 2. 处理远程图片 */}}
       {{ with .Params.remote_images }}
         {{ range . }}
           {{ $remoteUrl := . }}
-          {{/* 获取远程图片到本地缓存 */}}
           {{ $remoteRes := resources.GetRemote $remoteUrl }}
           
           {{ if $remoteRes }}
             {{ $title := path.Base $remoteUrl }}
             {{ $date := "" }}{{ $camera := "" }}{{ $lens := "" }}
             {{ $iso := "" }}{{ $aperture := "" }}{{ $exposure := "" }}{{ $focalLength := "" }}
+            {{ $description := "" }}
 
-            {{/* 自动读取远程图片的 EXIF */}}
-            {{ with $remoteRes.Exif }}
-              {{ with .Tags.ImageDescription }}{{ $title = . }}{{ end }}
-              {{ with .Tags.Model }}{{ $camera = . }}{{ end }}
-              {{ with .Tags.LensModel }}{{ $lens = . }}{{ end }}
-              {{ with .Tags.ISOSpeedRatings }}{{ $iso = . }}{{ end }}
-              {{ with .Tags.FNumber }}{{ $aperture = printf "f/%.1f" . }}{{ end }}
-              {{ with .Tags.ExposureTime }}{{ $exposure = printf "1/%d" (int (div 1 .)) }}{{ end }}
-              {{ with .Tags.FocalLength }}{{ $focalLength = printf "%.0fmm" . }}{{ end }}
-              {{ with .Date }}{{ $date = .Format "2006-01-02 15:04" }}{{ end }}
+            {{/* 从 front matter 的 images 列表中查找元数据 */}}
+            {{ $meta := index $imageMeta $remoteUrl }}
+            {{ with $meta }}
+              {{ $title = .title }}
+              {{ $description = .description }}
+              {{ $camera = .camera }}
+              {{ $lens = .lens }}
+              {{ $iso = .iso }}
+              {{ $aperture = .aperture }}
+              {{ $exposure = .exposure }}
+              {{ $focalLength = .focal }}
+              {{ $date = .date }}
             {{ end }}
 
-            {{/* 生成极小缩略图提取主色调 */}}
+            {{/* 自动读取远程图片的 EXIF（备选） */}}
+            {{ if not $camera }}
+              {{ with $remoteRes.Exif }}
+                {{ with .Tags.ImageDescription }}{{ $title = . }}{{ end }}
+                {{ with .Tags.Model }}{{ $camera = . }}{{ end }}
+                {{ with .Tags.LensModel }}{{ $lens = . }}{{ end }}
+                {{ with .Tags.ISOSpeedRatings }}{{ $iso = . }}{{ end }}
+                {{ with .Tags.FNumber }}{{ $aperture = printf "f/%.1f" . }}{{ end }}
+                {{ with .Tags.ExposureTime }}{{ $exposure = printf "1/%d" (int (div 1 .)) }}{{ end }}
+                {{ with .Tags.FocalLength }}{{ $focalLength = printf "%.0fmm" . }}{{ end }}
+                {{ with .Date }}{{ $date = .Format "2006-01-02 15:04" }}{{ end }}
+              {{ end }}
+            {{ end }}
+
             {{ $colorThumb := $remoteRes.Filter (slice images.AutoOrient (images.Process "fit 10x10")) }}
             {{ $color := index $colorThumb.Colors 0 | default "#333" }}
 
-            {{/* 压入数组 */}}
             {{ $images = $images | append (dict
               "Name" $title
               "Title" $title
+              "Description" $description
               "Date" $date
               "Camera" $camera
               "Lens" $lens
@@ -114,7 +172,7 @@
         {{ end }}
       {{ end }}
 
-      {{/* 3. 渲染逻辑分流 */}}
+      {{/* 3. 渲染 */}}
       {{ range sort $images (.Params.sort_by | default "Name") (.Params.sort_order | default "asc") }}
         {{ $item := . }}
         {{ $finalFullUrl := "" }}
@@ -124,15 +182,12 @@
         {{ $bgColor := "" }}
 
         {{ if $item.isRemote }}
-          {{/* 远程图片：直接使用 CDN 链接 */}}
           {{ $finalFullUrl = $item.remoteUrl }}
-          {{/* 注意：替换图床的缩略图参数，如阿里云OSS加 ?x-oss-process=image/resize,w_600 */}}
           {{ $finalThumbUrl = printf "%s?x-oss-process=image/resize,w_600" $item.remoteUrl }}
           {{ $finalWidth = $item.Width }}
           {{ $finalHeight = $item.Height }}
           {{ $bgColor = $item.bgColor }}
         {{ else }}
-          {{/* 本地图片：原有逻辑 */}}
           {{ $image := $item.image }}
           {{ $thumbnail := $image.Filter (slice images.AutoOrient (images.Process "fit 600x600")) }}
           {{ $full := $image.Filter (slice images.AutoOrient (images.Process "fit 1600x1600")) }}
@@ -156,6 +211,7 @@
           data-camera="{{ $item.Camera }}" data-lens="{{ $item.Lens }}" data-iso="{{ $item.ISO }}" 
           data-aperture="{{ $item.Aperture }}" data-exposure="{{ $item.Exposure }}" 
           data-focal="{{ $item.FocalLength }}" data-date="{{ $item.Date }}"
+          data-description="{{ $item.Description }}"
           itemscope itemtype="https://schema.org/ImageObject" 
           style="aspect-ratio: {{ $finalWidth }} / {{ $finalHeight }}">
           <figure style="background-color: {{ $bgColor }}; aspect-ratio: {{ $finalWidth }} / {{ $finalHeight }}">

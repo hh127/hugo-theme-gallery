@@ -46,10 +46,169 @@ if (gallery) {
     });
   }
 
-  // EXIF 信息按钮
+  // ============================================
+  // 右侧信息面板
+  // ============================================
+  
+  let infoPanel = null;
+  let panelVisible = false;
+  
+  // 创建信息面板
+  function createInfoPanel() {
+    if (infoPanel) return infoPanel;
+    
+    infoPanel = document.createElement("div");
+    infoPanel.className = "pswp__info-panel";
+    infoPanel.innerHTML = `
+      <div class="info-panel-content">
+        <div class="info-panel-header">
+          <h3 class="info-title"></h3>
+          <p class="info-description"></p>
+          <p class="info-subtitle"></p>
+        </div>
+        <div class="info-panel-divider"></div>
+        <div class="info-panel-body">
+          <div class="info-section info-camera-section">
+            <div class="info-icon">📷</div>
+            <div class="info-text">
+              <span class="info-label">相机</span>
+              <span class="info-value info-camera"></span>
+            </div>
+          </div>
+          <div class="info-section info-lens-section">
+            <div class="info-icon">🔭</div>
+            <div class="info-text">
+              <span class="info-label">镜头</span>
+              <span class="info-value info-lens"></span>
+            </div>
+          </div>
+          <div class="info-section info-settings-section">
+            <div class="info-icon">⚙️</div>
+            <div class="info-text">
+              <span class="info-label">参数</span>
+              <span class="info-value info-settings"></span>
+            </div>
+          </div>
+          <div class="info-section info-date-section">
+            <div class="info-icon">📅</div>
+            <div class="info-text">
+              <span class="info-label">拍摄时间</span>
+              <span class="info-value info-date"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(infoPanel);
+    
+    // 点击面板外关闭
+    infoPanel.addEventListener("click", (e) => {
+      if (e.target === infoPanel) {
+        toggleInfoPanel();
+      }
+    });
+    
+    return infoPanel;
+  }
+  
+  // 更新面板内容
+  function updateInfoPanel(pswp) {
+    const el = pswp.currSlide?.data?.element;
+    if (!el || !infoPanel) return;
+    
+    const title = el.getAttribute("title") || "未命名";
+    const description = el.dataset.description || "";
+    const camera = el.dataset.camera || "";
+    const lens = el.dataset.lens || "";
+    const iso = el.dataset.iso || "";
+    const aperture = el.dataset.aperture || "";
+    const exposure = el.dataset.exposure || "";
+    const focal = el.dataset.focal || "";
+    const date = el.dataset.date || "";
+    
+    // 更新标题
+    infoPanel.querySelector(".info-title").textContent = title;
+    
+    // 更新描述
+    const descElement = infoPanel.querySelector(".info-description");
+    if (description) {
+      descElement.textContent = description;
+      descElement.style.display = "block";
+    } else {
+      descElement.style.display = "none";
+    }
+    
+    // 更新副标题（相机型号）
+    const subtitle = infoPanel.querySelector(".info-subtitle");
+    if (camera) {
+      subtitle.textContent = camera;
+      subtitle.style.display = "block";
+    } else {
+      subtitle.style.display = "none";
+    }
+    
+    // 更新镜头信息
+    const lensSection = infoPanel.querySelector(".info-lens-section");
+    const lensValue = infoPanel.querySelector(".info-lens");
+    if (lens && lens !== "-- mm f/1") {
+      lensValue.textContent = lens;
+      lensSection.style.display = "flex";
+    } else {
+      lensSection.style.display = "none";
+    }
+    
+    // 更新参数信息
+    const settingsSection = infoPanel.querySelector(".info-settings-section");
+    const settingsValue = infoPanel.querySelector(".info-settings");
+    let settings = [];
+    if (aperture) settings.push(aperture);
+    if (exposure) settings.push(exposure);
+    if (iso) settings.push(iso);
+    if (focal && focal !== "0 mm") settings.push(focal);
+    
+    if (settings.length > 0) {
+      settingsValue.textContent = settings.join(" · ");
+      settingsSection.style.display = "flex";
+    } else {
+      settingsSection.style.display = "none";
+    }
+    
+    // 更新日期
+    const dateSection = infoPanel.querySelector(".info-date-section");
+    const dateValue = infoPanel.querySelector(".info-date");
+    if (date && date !== "1970:01:01 08:00:00") {
+      dateValue.textContent = date;
+      dateSection.style.display = "flex";
+    } else {
+      dateSection.style.display = "none";
+    }
+    
+    // 相机部分
+    const cameraSection = infoPanel.querySelector(".info-camera-section");
+    const cameraValue = infoPanel.querySelector(".info-camera");
+    if (camera) {
+      cameraValue.textContent = camera;
+      cameraSection.style.display = "flex";
+    } else {
+      cameraSection.style.display = "none";
+    }
+  }
+  
+  // 切换面板显示
+  function toggleInfoPanel() {
+    createInfoPanel();
+    panelVisible = !panelVisible;
+    infoPanel.classList.toggle("visible", panelVisible);
+    
+    if (panelVisible && lightbox.pswp) {
+      updateInfoPanel(lightbox.pswp);
+    }
+  }
+  
+  // 注册信息按钮
   lightbox.on("uiRegister", () => {
     lightbox.pswp.ui.registerElement({
-      name: "exif-button",
+      name: "info-button",
       order: 9,
       isButton: true,
       tagName: "button",
@@ -60,70 +219,28 @@ if (gallery) {
       },
       onInit: (el, pswp) => {
         el.setAttribute("title", "照片信息 (I)");
-        el.classList.add("pswp__button--exif");
-        
-        const exifPanel = document.createElement("div");
-        exifPanel.className = "pswp__exif-panel";
-        exifPanel.innerHTML = `
-          <div class="exif-content">
-            <div class="exif-title"></div>
-            <div class="exif-details"></div>
-          </div>
-        `;
-        document.body.appendChild(exifPanel);
-        
-        let panelVisible = false;
+        el.classList.add("pswp__button--info");
         
         el.addEventListener("click", (e) => {
           e.stopPropagation();
-          panelVisible = !panelVisible;
-          exifPanel.classList.toggle("visible", panelVisible);
-          if (panelVisible) {
-            updateExifPanel(pswp);
-          }
+          toggleInfoPanel();
         });
         
         pswp.on("change", () => {
           if (panelVisible) {
-            updateExifPanel(pswp);
+            updateInfoPanel(pswp);
           }
         });
         
         pswp.on("close", () => {
           panelVisible = false;
-          exifPanel.classList.remove("visible");
+          if (infoPanel) {
+            infoPanel.classList.remove("visible");
+          }
         });
       },
     });
   });
-
-  function updateExifPanel(pswp) {
-    const el = pswp.currSlide?.data?.element;
-    const panel = document.querySelector(".pswp__exif-panel");
-    if (!el || !panel) return;
-
-    const title = el.getAttribute("title") || "";
-    const camera = el.dataset.camera || "";
-    const lens = el.dataset.lens || "";
-    const iso = el.dataset.iso || "";
-    const aperture = el.dataset.aperture || "";
-    const exposure = el.dataset.exposure || "";
-    const focal = el.dataset.focal || "";
-    const date = el.dataset.date || "";
-
-    panel.querySelector(".exif-title").textContent = title;
-    
-    let details = "";
-    if (camera) details += `<div class="exif-row"><span class="exif-label">📷</span><span>${camera}</span></div>`;
-    if (lens && lens !== "-- mm f/1") details += `<div class="exif-row"><span class="exif-label">🔭</span><span>${lens}</span></div>`;
-    if (aperture) details += `<div class="exif-row"><span class="exif-label">⊙</span><span>${aperture}</span></div>`;
-    if (exposure) details += `<div class="exif-row"><span class="exif-label">⏱</span><span>${exposure}</span></div>`;
-    if (iso) details += `<div class="exif-row"><span class="exif-label">💡</span><span>${iso}</span></div>`;
-    if (focal && focal !== "0 mm") details += `<div class="exif-row"><span class="exif-label">🎯</span><span>${focal}</span></div>`;
-    if (date && date !== "1970:01:01 08:00:00") details += `<div class="exif-row"><span class="exif-label">📅</span><span>${date}</span></div>`;
-    
-    panel.querySelector(".exif-details").innerHTML = details || "<div class='exif-empty'>无 EXIF 信息</div>";
-  }
 
   // URL hash 支持
   lightbox.on("change", () => {
@@ -172,8 +289,7 @@ if (gallery) {
         break;
       case "i":
       case "I":
-        const exifBtn = document.querySelector(".pswp__button--exif");
-        if (exifBtn) exifBtn.click();
+        toggleInfoPanel();
         e.preventDefault();
         break;
     }

@@ -135,3 +135,235 @@ html.light .gallery-caption {
 html.light .gallery-caption .caption-camera {
   color: #444;
 }
+
+/* ============================================
+   灯箱右侧信息面板
+   ============================================ */
+
+/* 面板基础样式 */
+.pswp__info-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 320px;
+  height: 100vh;
+  background: rgba(30, 30, 30, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 100001;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+}
+
+/* 面板显示状态 */
+.pswp__info-panel.visible {
+  transform: translateX(0);
+}
+
+/* 面板内容容器 */
+.info-panel-content {
+  padding: 32px 24px;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 头部区域 */
+.info-panel-header {
+  margin-bottom: 24px;
+}
+
+/* 照片标题 */
+.info-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 12px;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+/* 照片描述 */
+.info-description {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 12px;
+  line-height: 1.6;
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+
+/* 相机型号副标题 */
+.info-subtitle {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+/* 分割线 */
+.info-panel-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  margin: 0 0 24px;
+}
+
+/* 信息区域 */
+.info-panel-body {
+  flex: 1;
+}
+
+/* 信息项 */
+.info-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.info-section:last-child {
+  border-bottom: none;
+}
+
+/* 图标 */
+.info-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+/* 文本容器 */
+.info-text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 标签 */
+.info-label {
+  display: block;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+/* 值 */
+.info-value {
+  display: block;
+  font-size: 0.95rem;
+  color: #ffffff;
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* ============================================
+   深色主题适配
+   ============================================ */
+html.dark .pswp__info-panel {
+  background: rgba(10, 10, 10, 0.95);
+  border-left-color: rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   浅色主题适配
+   ============================================ */
+html.light .pswp__info-panel {
+  background: rgba(255, 255, 255, 0.95);
+  border-left-color: rgba(0, 0, 0, 0.1);
+}
+
+html.light .info-title {
+  color: #1a1a1a;
+}
+
+html.light .info-description {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+html.light .info-subtitle {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+html.light .info-panel-divider {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+}
+
+html.light .info-section {
+  border-bottom-color: rgba(0, 0, 0, 0.05);
+}
+
+html.light .info-icon {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+html.light .info-label {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+html.light .info-value {
+  color: #1a1a1a;
+}
+
+/* ============================================
+   响应式调整
+   ============================================ */
+@media (max-width: 768px) {
+  .pswp__info-panel {
+    width: 100%;
+    max-width: 320px;
+  }
+  
+  .info-panel-content {
+    padding: 24px 20px;
+  }
+  
+  .info-title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pswp__info-panel {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* ============================================
+   动画
+   ============================================ */
+@keyframes infoPanelFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.pswp__info-panel.visible .info-panel-content {
+  animation: infoPanelFadeIn 0.3s ease-out 0.1s both;
+}
