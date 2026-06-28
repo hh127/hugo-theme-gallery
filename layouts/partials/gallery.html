@@ -1,50 +1,88 @@
 <section class="gallery">
-  <div id="gallery" style="visibility: hidden; height: 1px; overflow: hidden">
-    {{ $images := slice }}
-    {{ range $image := where (.Resources.ByType "image") "Params.hidden" "ne" true }}
-      {{ $title := "" }}
-      {{ $date := "" }}
-      {{ with $image.Exif }}
-        {{ $date = .Date }}
-        {{ with .Tags.ImageDescription }}
-          {{/* Title from EXIF ImageDescription */}}
-          {{ $title = . }}
+  <div id="gallery-wrapper" style="{{ if .Params.password }}display: none;{{ end }}">
+    <div id="gallery" style="visibility: hidden; height: 1px; overflow: hidden">
+      {{ $images := slice }}
+      {{ $albumName := .File.Dir | path.Base }}
+      {{ $exifData := hugo.Data.exif }}
+      {{ $albumExif := false }}
+      {{ with $exifData }}
+        {{ $albumExif = index . $albumName }}
+      {{ end }}
+      {{ range $image := where (.Resources.ByType "image") "Params.hidden" "ne" true }}
+        {{ $title := "" }}
+        {{ $date := "" }}
+        {{ $camera := "" }}
+        {{ $lens := "" }}
+        {{ $iso := "" }}
+        {{ $aperture := "" }}
+        {{ $exposure := "" }}
+        {{ $focalLength := "" }}
+        
+        {{/* 从 EXIF JSON 数据中读取 */}}
+        {{ if $albumExif }}
+          {{ $imageExif := index $albumExif $image.Name }}
+          {{ with $imageExif }}
+            {{ $camera = .camera }}
+            {{ $lens = .lens }}
+            {{ $iso = .iso }}
+            {{ $aperture = .aperture }}
+            {{ $exposure = .exposure }}
+            {{ $focalLength = .focal }}
+            {{ $date = .date }}
+          {{ end }}
         {{ end }}
-      {{ end }}
-      {{ if ne $image.Title $image.Name }}
-        {{/* Title from front matter */}}
-        {{ $title = $image.Title }}
-      {{ end }}
-      {{ if $image.Params.Date }}
-        {{/* Date from front matter */}}
-        {{ $date = time $image.Params.Date }}
-      {{ end }}
-      {{ $images = $images | append (dict
-        "Name" $image.Name
-        "Title" $title
-        "Date" $date
-        "image" $image
-        "Params" $image.Params
-        )
-      }}
-    {{ end }}
-    {{ $publishResources := default true .Params.build.publishResources }}
-    {{ range sort $images (.Params.sort_by | default "Name") (.Params.sort_order | default "asc") }}
-      {{ $image := .image }}
-      {{ $thumbnail := $image.Filter (slice images.AutoOrient (images.Process "fit 600x600")) }}
-      {{ $full := $image.Filter (slice images.AutoOrient (images.Process "fit 1600x1600")) }}
-      {{ $color := index $thumbnail.Colors 0 | default "transparent" }}
-      <a class="gallery-item" href="{{ if $publishResources }}{{ $image.RelPermalink }}{{ else }}{{ $full.RelPermalink }}{{ end }}" data-pswp-src="{{ $full.RelPermalink }}" data-pswp-width="{{ $full.Width }}" data-pswp-height="{{ $full.Height }}" data-pswp-target="{{ $image.Name | urlize }}" title="{{ .Title }}" itemscope itemtype="https://schema.org/ImageObject" style="aspect-ratio: {{ $thumbnail.Width }} / {{ $thumbnail.Height }}">
-        <figure style="background-color: {{ $color }}; aspect-ratio: {{ $thumbnail.Width }} / {{ $thumbnail.Height }}">
-          <img class="lazyload" width="{{ $thumbnail.Width }}" height="{{ $thumbnail.Height }}" data-src="{{ $thumbnail.RelPermalink }}" alt="{{ .Title }}" />
-        </figure>
-        <meta itemprop="contentUrl" content="{{ if $publishResources }}{{ $image.RelPermalink }}{{ else }}{{ $full.RelPermalink }}{{ end }}" />
-        {{ with site.Params.Author }}
-          <span itemprop="creator" itemtype="https://schema.org/Person" itemscope>
-            <meta itemprop="name" content="{{ site.Params.Author.name }}" />
-          </span>
+        
+        {{/* 从 Hugo EXIF 读取标题 */}}
+        {{ with $image.Exif }}
+          {{ with .Tags.ImageDescription }}
+            {{ $title = . }}
+          {{ end }}
         {{ end }}
-      </a>
-    {{ end }}
+        
+        {{/* front matter 覆盖 */}}
+        {{ if ne $image.Title $image.Name }}
+          {{ $title = $image.Title }}
+        {{ end }}
+        {{ if $image.Params.Date }}
+          {{ $date = $image.Params.Date.Format "2006-01-02 15:04" }}
+        {{ end }}
+        
+        {{ $images = $images | append (dict
+          "Name" $image.Name
+          "Title" $title
+          "Date" $date
+          "Camera" $camera
+          "Lens" $lens
+          "ISO" $iso
+          "Aperture" $aperture
+          "Exposure" $exposure
+          "FocalLength" $focalLength
+          "image" $image
+          "Params" $image.Params
+          ) }}
+      {{ end }}
+      {{ $publishResources := default true .Params.build.publishResources }}
+      {{ range sort $images (.Params.sort_by | default "Name") (.Params.sort_order | default "asc") }}
+        {{ $image := .image }}
+        {{ $thumbnail := $image.Filter (slice images.AutoOrient (images.Process "fit 600x600")) }}
+        {{ $full := $image.Filter (slice images.AutoOrient (images.Process "fit 1600x1600")) }}
+        {{ $color := index $thumbnail.Colors 0 | default "transparent" }}
+        <a class="gallery-item" href="{{ if $publishResources }}{{ $image.RelPermalink }}{{ else }}{{ $full.RelPermalink }}{{ end }}" data-pswp-src="{{ $full.RelPermalink }}" data-pswp-width="{{ $full.Width }}" data-pswp-height="{{ $full.Height }}" data-pswp-target="{{ $image.Name | urlize }}" title="{{ .Title }}" 
+          data-camera="{{ .Camera }}" data-lens="{{ .Lens }}" data-iso="{{ .ISO }}" 
+          data-aperture="{{ .Aperture }}" data-exposure="{{ .Exposure }}" 
+          data-focal="{{ .FocalLength }}" data-date="{{ .Date }}"
+          itemscope itemtype="https://schema.org/ImageObject" style="aspect-ratio: {{ $thumbnail.Width }} / {{ $thumbnail.Height }}">
+          <figure style="background-color: {{ $color }}; aspect-ratio: {{ $thumbnail.Width }} / {{ $thumbnail.Height }}">
+            <img class="lazyload" width="{{ $thumbnail.Width }}" height="{{ $thumbnail.Height }}" data-src="{{ $thumbnail.RelPermalink }}" alt="{{ .Title }}" />
+          </figure>
+          <meta itemprop="contentUrl" content="{{ if $publishResources }}{{ $image.RelPermalink }}{{ else }}{{ $full.RelPermalink }}{{ end }}" />
+          {{ with site.Params.Author }}
+            <span itemprop="creator" itemtype="https://schema.org/Person" itemscope>
+              <meta itemprop="name" content="{{ site.Params.Author.name }}" />
+            </span>
+          {{ end }}
+        </a>
+      {{ end }}
+    </div>
   </div>
 </section>

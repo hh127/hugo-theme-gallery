@@ -1,0 +1,122 @@
+/* EXIF 信息面板样式 */
+.pswp__exif-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fff;
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  z-index: 100;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.pswp__exif-panel.visible {
+  max-height: 300px;
+  padding: 1rem 1.5rem;
+}
+
+.exif-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.exif-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #fff;
+  text-align: center;
+}
+
+.exif-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.5rem;
+}
+
+.exif-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.exif-label {
+  font-size: 1rem;
+  width: 1.5rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.exif-empty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  padding: 0.5rem;
+}
+
+/* EXIF 按钮样式 */
+.pswp__button--exif {
+  background: none !important;
+  border: none !important;
+}
+
+.pswp__button--exif svg {
+  width: 24px;
+  height: 24px;
+  fill: #fff;
+}
+
+/* 移动端适配 */
+@media (max-width: 700px) {
+  .pswp__exif-panel.visible {
+    padding: 0.75rem 1rem;
+  }
+  
+  .exif-details {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.4rem;
+  }
+  
+  .exif-row {
+    font-size: 0.8rem;
+  }
+  
+  .exif-title {
+    font-size: 0.9rem;
+  }
+}
+
+/* 深色主题适配 */
+html.dark .pswp__exif-panel {
+  background: rgba(10, 10, 10, 0.9);
+}
+
+/* 浅色主题适配 */
+html.light .pswp__exif-panel {
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a1a1a;
+}
+
+html.light .pswp__exif-panel .exif-title {
+  color: #1a1a1a;
+}
+
+html.light .pswp__exif-panel .exif-row {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+html.light .pswp__exif-panel .exif-empty {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+html.light .pswp__button--exif svg {
+  fill: #1a1a1a;
+}

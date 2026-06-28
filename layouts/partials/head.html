@@ -21,6 +21,12 @@
   {{ partial "opengraph.html" . }}
   {{ $css := resources.Get "/css/main.scss" | toCSS | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $css.RelPermalink }}" />
+  {{ $exifCss := resources.Get "css/exif-panel.css" | minify | fingerprint }}
+  <link rel="stylesheet" href="{{ $exifCss.RelPermalink }}">
+  {{ if .Params.password }}
+    {{ $passwordCss := resources.Get "css/password-protect.css" | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $passwordCss.RelPermalink }}">
+  {{ end }}
   {{ $params := dict
     "closeTitle" (i18n "closeTitle")
     "zoomTitle" (i18n "zoomTitle")
@@ -35,5 +41,11 @@
   }}
   {{ $js := resources.Get "js/main.js" | js.Build (dict "minify" true "params" $params) | resources.Fingerprint }}
   <script src="{{ $js.RelPermalink }}" defer></script>
+  {{ $lightboxJs := resources.Get "js/lightbox.js" | js.Build (dict "minify" true "params" $params) | resources.Fingerprint }}
+  <script src="{{ $lightboxJs.RelPermalink }}" defer></script>
+  {{ if .Params.password }}
+    {{ $passwordJs := resources.Get "js/password-protect.js" | js.Build (dict "minify" true) | resources.Fingerprint }}
+    <script src="{{ $passwordJs.RelPermalink }}" defer></script>
+  {{ end }}
   {{- partial "head-custom.html" . -}}
 </head>
