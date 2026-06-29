@@ -60,42 +60,30 @@ if (gallery) {
     infoPanel = document.createElement("div");
     infoPanel.className = "pswp__info-panel";
     infoPanel.innerHTML = `
-      <div class="info-panel-content">
-        <div class="info-panel-header">
+      <div class="info-story">
+        <div class="info-title-wrapper">
           <h3 class="info-title"></h3>
-          <p class="info-description"></p>
-          <p class="info-subtitle"></p>
         </div>
-        <div class="info-panel-divider"></div>
-        <div class="info-panel-body">
-          <div class="info-section info-camera-section">
-            <div class="info-icon">📷</div>
-            <div class="info-text">
-              <span class="info-label">相机</span>
-              <span class="info-value info-camera"></span>
-            </div>
-          </div>
-          <div class="info-section info-lens-section">
-            <div class="info-icon">🔭</div>
-            <div class="info-text">
-              <span class="info-label">镜头</span>
-              <span class="info-value info-lens"></span>
-            </div>
-          </div>
-          <div class="info-section info-settings-section">
-            <div class="info-icon">⚙️</div>
-            <div class="info-text">
-              <span class="info-label">参数</span>
-              <span class="info-value info-settings"></span>
-            </div>
-          </div>
-          <div class="info-section info-date-section">
-            <div class="info-icon">📅</div>
-            <div class="info-text">
-              <span class="info-label">拍摄时间</span>
-              <span class="info-value info-date"></span>
-            </div>
-          </div>
+        <div class="info-description-wrapper">
+          <p class="info-description"></p>
+        </div>
+      </div>
+      <div class="info-panel-meta">
+        <div class="meta-item info-camera-section">
+          <span class="meta-label">CAMERA</span>
+          <span class="meta-value info-camera"></span>
+        </div>
+        <div class="meta-item info-lens-section">
+          <span class="meta-label">LENS</span>
+          <span class="meta-value info-lens"></span>
+        </div>
+        <div class="meta-item info-settings-section">
+          <span class="meta-label">SETTINGS</span>
+          <span class="meta-value info-settings"></span>
+        </div>
+        <div class="meta-item info-date-section">
+          <span class="meta-label">DATE</span>
+          <span class="meta-value info-date"></span>
         </div>
       </div>
     `;
@@ -116,7 +104,7 @@ if (gallery) {
     const el = pswp.currSlide?.data?.element;
     if (!el || !infoPanel) return;
     
-    const title = el.getAttribute("title") || "未命名";
+    const title = el.dataset.title || el.getAttribute("title") || "";
     const description = el.dataset.description || "";
     const camera = el.dataset.camera || "";
     const lens = el.dataset.lens || "";
@@ -127,25 +115,26 @@ if (gallery) {
     const date = el.dataset.date || "";
     
     // 更新标题
-    infoPanel.querySelector(".info-title").textContent = title;
+    const titleElement = infoPanel.querySelector(".info-title");
+    if (title) {
+      titleElement.textContent = title;
+      infoPanel.querySelector(".info-title-wrapper").style.display = "block";
+    } else {
+      infoPanel.querySelector(".info-title-wrapper").style.display = "none";
+    }
     
     // 更新描述
+    const descWrapper = infoPanel.querySelector(".info-description-wrapper");
     const descElement = infoPanel.querySelector(".info-description");
     if (description) {
       descElement.textContent = description;
-      descElement.style.display = "block";
+      descWrapper.style.display = "block";
     } else {
-      descElement.style.display = "none";
+      descWrapper.style.display = "none";
     }
     
-    // 更新副标题（相机型号）
-    const subtitle = infoPanel.querySelector(".info-subtitle");
-    if (camera) {
-      subtitle.textContent = camera;
-      subtitle.style.display = "block";
-    } else {
-      subtitle.style.display = "none";
-    }
+    // 检查是否有参数信息
+    let hasParams = false;
     
     // 更新镜头信息
     const lensSection = infoPanel.querySelector(".info-lens-section");
@@ -153,6 +142,7 @@ if (gallery) {
     if (lens && lens !== "-- mm f/1") {
       lensValue.textContent = lens;
       lensSection.style.display = "flex";
+      hasParams = true;
     } else {
       lensSection.style.display = "none";
     }
@@ -167,8 +157,9 @@ if (gallery) {
     if (focal && focal !== "0 mm") settings.push(focal);
     
     if (settings.length > 0) {
-      settingsValue.textContent = settings.join(" · ");
+      settingsValue.textContent = settings.join("  ·  ");
       settingsSection.style.display = "flex";
+      hasParams = true;
     } else {
       settingsSection.style.display = "none";
     }
@@ -179,6 +170,7 @@ if (gallery) {
     if (date && date !== "1970:01:01 08:00:00") {
       dateValue.textContent = date;
       dateSection.style.display = "flex";
+      hasParams = true;
     } else {
       dateSection.style.display = "none";
     }
@@ -189,8 +181,25 @@ if (gallery) {
     if (camera) {
       cameraValue.textContent = camera;
       cameraSection.style.display = "flex";
+      hasParams = true;
     } else {
       cameraSection.style.display = "none";
+    }
+    
+    // 根据是否有参数来显示/隐藏整个参数区域
+    const metaPanel = infoPanel.querySelector(".info-panel-meta");
+    if (hasParams) {
+      metaPanel.style.display = "flex";
+    } else {
+      metaPanel.style.display = "none";
+    }
+    
+    // 根据是否有故事文本来调整面板位置
+    const storyPanel = infoPanel.querySelector(".info-story");
+    if (title || description) {
+      storyPanel.style.display = "flex";
+    } else {
+      storyPanel.style.display = "none";
     }
   }
   
@@ -250,13 +259,6 @@ if (gallery) {
 
   lightbox.on("close", () => {
     history.replaceState("", document.title, window.location.pathname);
-  });
-
-  // 动态标题
-  new PhotoSwipeDynamicCaption(lightbox, {
-    mobileLayoutBreakpoint: 700,
-    type: "auto",
-    mobileCaptionOverlapRatio: 1,
   });
 
   lightbox.init();

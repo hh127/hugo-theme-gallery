@@ -207,23 +207,15 @@
           data-pswp-width="{{ $finalWidth }}" 
           data-pswp-height="{{ $finalHeight }}" 
           data-pswp-target="{{ $item.Name | urlize }}" 
-          title="{{ $item.Title }}" 
           data-camera="{{ $item.Camera }}" data-lens="{{ $item.Lens }}" data-iso="{{ $item.ISO }}" 
           data-aperture="{{ $item.Aperture }}" data-exposure="{{ $item.Exposure }}" 
           data-focal="{{ $item.FocalLength }}" data-date="{{ $item.Date }}"
           data-description="{{ $item.Description }}"
+          data-title="{{ $item.Title }}"
           itemscope itemtype="https://schema.org/ImageObject" 
           style="aspect-ratio: {{ $finalWidth }} / {{ $finalHeight }}">
           <figure style="background-color: {{ $bgColor }}; aspect-ratio: {{ $finalWidth }} / {{ $finalHeight }}">
             <img class="lazyload" width="{{ $finalWidth }}" height="{{ $finalHeight }}" data-src="{{ $finalThumbUrl }}" alt="{{ $item.Title }}" />
-            {{ if $item.Title }}
-              <figcaption class="gallery-caption">
-                <span class="caption-title">{{ $item.Title }}</span>
-                {{ if $item.Camera }}
-                  <span class="caption-camera">{{ $item.Camera }}</span>
-                {{ end }}
-              </figcaption>
-            {{ end }}
           </figure>
           <meta itemprop="contentUrl" content="{{ $finalFullUrl }}" />
           {{ with site.Params.Author }}

@@ -46,13 +46,11 @@ img.lazyload:not([src]) {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              filter 0.5s ease;
+  transition: filter 0.3s ease;
 }
 
-/* 悬停时图片放大和变暗 */
+/* 悬停时图片变暗 */
 .gallery-item:hover img {
-  transform: scale(1.04);
   filter: brightness(0.85);
 }
 
@@ -137,7 +135,7 @@ html.light .gallery-caption .caption-camera {
 }
 
 /* ============================================
-   灯箱右侧信息面板
+   灯箱右侧信息面板 - 故事感设计
    ============================================ */
 
 /* 面板基础样式 */
@@ -145,18 +143,18 @@ html.light .gallery-caption .caption-camera {
   position: fixed;
   top: 0;
   right: 0;
-  width: 320px;
+  width: 360px;
   height: 100vh;
-  background: rgba(30, 30, 30, 0.98);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(15, 15, 15, 0.85);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 100001;
   transform: translateX(100%);
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  overflow-y: auto;
-  overflow-x: hidden;
-  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* 面板显示状态 */
@@ -164,129 +162,100 @@ html.light .gallery-caption .caption-camera {
   transform: translateX(0);
 }
 
-/* 面板内容容器 */
-.info-panel-content {
-  padding: 32px 24px;
-  min-height: 100%;
+/* 故事区域 - 右下角 */
+.info-story {
+  margin-top: auto;
+  padding: 20px 32px 36px;
   display: flex;
   flex-direction: column;
+  gap: 8px;
 }
 
-/* 头部区域 */
-.info-panel-header {
-  margin-bottom: 24px;
+/* 标题包装器 */
+.info-title-wrapper {
+  position: relative;
 }
 
 /* 照片标题 */
 .info-title {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.8rem;
+  font-weight: 300;
   color: #ffffff;
-  margin: 0 0 12px;
-  line-height: 1.3;
-  letter-spacing: -0.02em;
-}
-
-/* 照片描述 */
-.info-description {
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.7);
-  margin: 0 0 12px;
-  line-height: 1.6;
-  font-style: italic;
-  letter-spacing: 0.01em;
-}
-
-/* 相机型号副标题 */
-.info-subtitle {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.5);
   margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  font-family: "Georgia", "Times New Roman", serif;
+}
+
+/* 描述包装器 */
+.info-description-wrapper {
+  max-width: 100%;
+}
+
+/* 照片描述 - 故事感文字 */
+.info-description {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0;
+  line-height: 1.7;
+  font-style: italic;
   letter-spacing: 0.02em;
+  font-family: "Georgia", "Times New Roman", serif;
 }
 
-/* 分割线 */
-.info-panel-divider {
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.1) 0%,
-    rgba(255, 255, 255, 0.05) 100%
-  );
-  margin: 0 0 24px;
-}
-
-/* 信息区域 */
-.info-panel-body {
-  flex: 1;
-}
-
-/* 信息项 */
-.info-section {
+/* 元数据区域 - 顶部极简 */
+.info-panel-meta {
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 16px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 20px 32px;
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
 }
 
-.info-section:last-child {
-  border-bottom: none;
+.info-panel-meta:hover {
+  opacity: 0.9;
 }
 
-/* 图标 */
-.info-icon {
-  width: 32px;
-  height: 32px;
+/* 元数据项 - 横向排列 */
+.meta-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  font-size: 1rem;
-  flex-shrink: 0;
+  gap: 6px;
+  padding: 6px 12px 6px 0;
 }
 
-/* 文本容器 */
-.info-text {
-  flex: 1;
-  min-width: 0;
-}
-
-/* 标签 */
-.info-label {
-  display: block;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.4);
+/* 元数据标签 */
+.meta-label {
+  font-size: 0.5rem;
+  color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  margin-bottom: 4px;
+  font-weight: 500;
 }
 
-/* 值 */
-.info-value {
-  display: block;
-  font-size: 0.95rem;
-  color: #ffffff;
-  font-weight: 500;
-  line-height: 1.4;
-  word-break: break-word;
+/* 元数据值 */
+.meta-value {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+  letter-spacing: 0.01em;
 }
 
 /* ============================================
    深色主题适配
    ============================================ */
 html.dark .pswp__info-panel {
-  background: rgba(10, 10, 10, 0.95);
-  border-left-color: rgba(255, 255, 255, 0.1);
+  background: rgba(5, 5, 5, 0.9);
+  border-left-color: rgba(255, 255, 255, 0.05);
 }
 
 /* ============================================
    浅色主题适配
    ============================================ */
 html.light .pswp__info-panel {
-  background: rgba(255, 255, 255, 0.95);
-  border-left-color: rgba(0, 0, 0, 0.1);
+  background: rgba(250, 250, 250, 0.9);
+  border-left-color: rgba(0, 0, 0, 0.08);
 }
 
 html.light .info-title {
@@ -297,32 +266,16 @@ html.light .info-description {
   color: rgba(0, 0, 0, 0.6);
 }
 
-html.light .info-subtitle {
-  color: rgba(0, 0, 0, 0.5);
-}
-
-html.light .info-panel-divider {
-  background: linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 0.1) 0%,
-    rgba(0, 0, 0, 0.05) 100%
-  );
-}
-
-html.light .info-section {
-  border-bottom-color: rgba(0, 0, 0, 0.05);
-}
-
-html.light .info-icon {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-html.light .info-label {
+html.light .meta-label {
   color: rgba(0, 0, 0, 0.4);
 }
 
-html.light .info-value {
-  color: #1a1a1a;
+html.light .meta-value {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+html.light .meta-item {
+  border-bottom-color: rgba(0, 0, 0, 0.04);
 }
 
 /* ============================================
@@ -331,15 +284,23 @@ html.light .info-value {
 @media (max-width: 768px) {
   .pswp__info-panel {
     width: 100%;
-    max-width: 320px;
+    max-width: 360px;
   }
   
-  .info-panel-content {
-    padding: 24px 20px;
+  .info-story {
+    padding: 16px 24px 28px;
   }
   
   .info-title {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
+  }
+  
+  .info-description {
+    font-size: 0.85rem;
+  }
+  
+  .info-panel-meta {
+    padding: 16px 24px;
   }
 }
 
@@ -348,22 +309,34 @@ html.light .info-value {
     width: 100%;
     max-width: none;
   }
+  
+  .info-story {
+    padding: 12px 20px 24px;
+  }
+  
+  .info-title {
+    font-size: 1.35rem;
+  }
+  
+  .info-panel-meta {
+    padding: 12px 20px;
+  }
 }
 
 /* ============================================
    动画
    ============================================ */
-@keyframes infoPanelFadeIn {
+@keyframes storyReveal {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
 }
 
-.pswp__info-panel.visible .info-panel-content {
-  animation: infoPanelFadeIn 0.3s ease-out 0.1s both;
+.pswp__info-panel.visible .info-story {
+  animation: storyReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
 }

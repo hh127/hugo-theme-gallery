@@ -118,6 +118,47 @@ remote_images:
 - `layouts/partials/get-gallery.html` - Support remote image covers / 支持远程图片封面
 - `layouts/partials/album-card.html` - Support remote image thumbnails / 支持远程图片缩略图
 
+#### 6. Lightbox Info Panel Redesign / 灯箱信息面板重新设计
+
+Completely redesigned the lightbox info panel with a cinematic, story-driven layout:
+- Story text (title & description) positioned at bottom-right corner
+- Frosted glass effect with backdrop blur
+- Minimal horizontal metadata display (camera, lens, settings, date)
+- Metadata hidden by default, reveals on hover
+- Smooth slide-in animation from right
+- Optimized for reading flow and visual hierarchy
+
+重新设计灯箱信息面板，采用电影感、故事驱动的布局：
+- 故事文字（标题和描述）位于右下角
+- 磨砂玻璃效果，背景模糊
+- 极简横向元数据显示（相机、镜头、参数、日期）
+- 元数据默认隐藏，悬停时显示
+- 从右侧平滑滑入动画
+- 优化阅读流程和视觉层次
+
+**Files modified / 修改文件:**
+- `assets/css/main.scss` - Panel styling with frosted glass / 磨砂玻璃面板样式
+- `assets/js/lightbox.js` - Panel logic and interactions / 面板逻辑和交互
+
+#### 7. Gallery Performance Optimization / 画廊性能优化
+
+Optimized gallery interactions for smoother experience:
+- Removed hover scale effect that caused conflict with PhotoSwipe zoom animation
+- Removed dynamic caption plugin to reduce overhead
+- Changed title attribute to data-title to prevent browser tooltip
+- Simplified hover effect to brightness-only for better performance
+
+优化画廊交互，提升流畅度：
+- 移除悬停放大效果，避免与 PhotoSwipe 缩放动画冲突
+- 移除动态标题插件，减少开销
+- 将 title 属性改为 data-title，防止浏览器 tooltip
+- 简化悬停效果为仅变暗，提升性能
+
+**Files modified / 修改文件:**
+- `assets/css/main.scss` - Simplified hover styles / 简化悬停样式
+- `assets/js/lightbox.js` - Removed caption plugin, optimized panel / 移除标题插件，优化面板
+- `layouts/partials/gallery.html` - Changed title to data-title / 将 title 改为 data-title
+
 ---
 
 ## 中文说明
@@ -186,6 +227,24 @@ remote_images:
   - "https://cdn.example.com/photo2.jpg"
 ---
 ```
+
+#### 6. 灯箱信息面板重新设计
+
+全新设计的灯箱信息面板，采用电影感、故事驱动的布局：
+- 故事文字（标题和描述）位于右下角
+- 磨砂玻璃效果，背景模糊
+- 极简横向元数据显示（相机、镜头、参数、日期）
+- 元数据默认隐藏，悬停时显示
+- 从右侧平滑滑入动画
+- 优化阅读流程和视觉层次
+
+#### 7. 画廊性能优化
+
+优化画廊交互，提升流畅度：
+- 移除悬停放大效果，避免与 PhotoSwipe 缩放动画冲突
+- 移除动态标题插件，减少开销
+- 将 title 属性改为 data-title，防止浏览器 tooltip
+- 简化悬停效果为仅变暗，提升性能
 
 ---
 
