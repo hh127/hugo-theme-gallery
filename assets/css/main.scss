@@ -137,7 +137,7 @@ html.light .gallery-caption .caption-camera {
 }
 
 /* ============================================
-   灯箱右侧信息面板 - 故事感设计
+   灯箱右侧信息面板 - 杂志风格
    ============================================ */
 
 /* 面板基础样式 */
@@ -145,15 +145,15 @@ html.light .gallery-caption .caption-camera {
   position: fixed;
   top: 0;
   right: 0;
-  width: 360px;
+  width: 380px;
   height: 100vh;
-  background: rgba(15, 15, 15, 0.85);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(12, 12, 12, 0.88);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
   z-index: 100001;
   transform: translateX(100%);
-  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -167,10 +167,10 @@ html.light .gallery-caption .caption-camera {
 /* 故事区域 - 右下角 */
 .info-story {
   margin-top: auto;
-  padding: 20px 32px 36px;
+  padding: 0 40px 48px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 20px;
 }
 
 /* 标题包装器 */
@@ -178,14 +178,25 @@ html.light .gallery-caption .caption-camera {
   position: relative;
 }
 
-/* 照片标题 */
+/* 装饰线 - 标题上方 */
+.info-title-wrapper::before {
+  content: '';
+  position: absolute;
+  top: -24px;
+  left: 0;
+  width: 40px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 照片标题 - 杂志大标题 */
 .info-title {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 300;
   color: #ffffff;
   margin: 0;
-  line-height: 1.2;
-  letter-spacing: -0.03em;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
   font-family: "Georgia", "Times New Roman", serif;
 }
 
@@ -194,78 +205,88 @@ html.light .gallery-caption .caption-camera {
   max-width: 100%;
 }
 
-/* 照片描述 - 故事感文字 */
+/* 照片描述 - 杂志正文风格 */
 .info-description {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.55);
   margin: 0;
-  line-height: 1.7;
+  line-height: 1.8;
   font-style: italic;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   font-family: "Georgia", "Times New Roman", serif;
 }
 
-/* 元数据区域 - 顶部极简 */
+/* 元数据区域 - 底部精致小字 */
 .info-panel-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 0;
-  padding: 20px 32px;
-  opacity: 0.4;
-  transition: opacity 0.3s ease;
+  padding: 0 40px 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 20px;
+  opacity: 0.35;
+  transition: opacity 0.4s ease;
 }
 
 .info-panel-meta:hover {
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
 /* 元数据项 - 横向排列 */
 .meta-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px 6px 0;
+  gap: 8px;
+  padding: 6px 16px 6px 0;
 }
 
 /* 元数据标签 */
 .meta-label {
   font-size: 0.5rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.45);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   font-weight: 500;
 }
 
 /* 元数据值 */
 .meta-value {
   font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.75);
   font-weight: 400;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
 }
 
 /* ============================================
    深色主题适配
    ============================================ */
 html.dark .pswp__info-panel {
-  background: rgba(5, 5, 5, 0.9);
-  border-left-color: rgba(255, 255, 255, 0.05);
+  background: rgba(5, 5, 5, 0.92);
+  border-left-color: rgba(255, 255, 255, 0.04);
 }
 
 /* ============================================
    浅色主题适配
    ============================================ */
 html.light .pswp__info-panel {
-  background: rgba(250, 250, 250, 0.9);
-  border-left-color: rgba(0, 0, 0, 0.08);
+  background: rgba(252, 252, 252, 0.92);
+  border-left-color: rgba(0, 0, 0, 0.06);
 }
 
 html.light .info-title {
   color: #1a1a1a;
 }
 
+html.light .info-title-wrapper::before {
+  background: rgba(0, 0, 0, 0.2);
+}
+
 html.light .info-description {
-  color: rgba(0, 0, 0, 0.6);
+  color: rgba(0, 0, 0, 0.5);
+}
+
+html.light .info-panel-meta {
+  border-top-color: rgba(0, 0, 0, 0.06);
 }
 
 html.light .meta-label {
@@ -273,11 +294,7 @@ html.light .meta-label {
 }
 
 html.light .meta-value {
-  color: rgba(0, 0, 0, 0.8);
-}
-
-html.light .meta-item {
-  border-bottom-color: rgba(0, 0, 0, 0.04);
+  color: rgba(0, 0, 0, 0.7);
 }
 
 /* ============================================
