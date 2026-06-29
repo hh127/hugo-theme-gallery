@@ -52,6 +52,7 @@ if (gallery) {
   
   let infoPanel = null;
   let panelVisible = false;
+  let originalViewportWidth = 0;
   
   // 创建信息面板
   function createInfoPanel() {
@@ -102,7 +103,13 @@ if (gallery) {
   // 更新面板内容
   function updateInfoPanel(pswp) {
     const el = pswp.currSlide?.data?.element;
-    if (!el || !infoPanel) return;
+    if (!el || !infoPanel) {
+      console.log('updateInfoPanel: no element or panel');
+      return;
+    }
+    
+    console.log('updateInfoPanel element:', el);
+    console.log('dataset:', el.dataset);
     
     const title = el.dataset.title || el.getAttribute("title") || "";
     const description = el.dataset.description || "";
@@ -113,6 +120,8 @@ if (gallery) {
     const exposure = el.dataset.exposure || "";
     const focal = el.dataset.focal || "";
     const date = el.dataset.date || "";
+    
+    console.log('title:', title, 'description:', description);
     
     // 更新标题
     const titleElement = infoPanel.querySelector(".info-title");
@@ -208,6 +217,36 @@ if (gallery) {
     createInfoPanel();
     panelVisible = !panelVisible;
     infoPanel.classList.toggle("visible", panelVisible);
+    
+    // 动态调整 PhotoSwipe viewport
+    if (lightbox.pswp) {
+      const pswp = lightbox.pswp;
+      
+      // 保存原始宽度（只在第一次时保存）
+      if (originalViewportWidth === 0) {
+        originalViewportWidth = pswp.viewportSize.x;
+      }
+      
+      const panelWidth = 380;
+      
+      if (panelVisible) {
+        // 面板打开：减小视口宽度，图片区域在左侧
+        pswp.viewportSize.x = originalViewportWidth - panelWidth;
+      } else {
+        // 面板关闭：恢复原始宽度
+        pswp.viewportSize.x = originalViewportWidth;
+      }
+      
+      // 刷新 mainScroll
+      if (pswp.mainScroll) {
+        pswp.mainScroll.resize();
+      }
+      
+      // 刷新当前 slide
+      if (pswp.currSlide) {
+        pswp.currSlide.resize();
+      }
+    }
     
     if (panelVisible && lightbox.pswp) {
       updateInfoPanel(lightbox.pswp);

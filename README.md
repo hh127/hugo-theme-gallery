@@ -122,41 +122,45 @@ remote_images:
 
 Completely redesigned the lightbox info panel with a cinematic, story-driven layout:
 - Story text (title & description) positioned at bottom-right corner
+- Fixed 380px panel width on the right side
+- Image auto-centers in remaining space when panel opens
 - Frosted glass effect with backdrop blur
 - Minimal horizontal metadata display (camera, lens, settings, date)
 - Metadata hidden by default, reveals on hover
 - Smooth slide-in animation from right
-- Optimized for reading flow and visual hierarchy
+- Magazine-style typography with decorative elements
 
 重新设计灯箱信息面板，采用电影感、故事驱动的布局：
 - 故事文字（标题和描述）位于右下角
+- 右侧固定 380px 面板宽度
+- 打开面板时，图片在剩余空间自动居中
 - 磨砂玻璃效果，背景模糊
 - 极简横向元数据显示（相机、镜头、参数、日期）
 - 元数据默认隐藏，悬停时显示
 - 从右侧平滑滑入动画
-- 优化阅读流程和视觉层次
+- 杂志风格排版，装饰性元素
 
 **Files modified / 修改文件:**
 - `assets/css/main.scss` - Panel styling with frosted glass / 磨砂玻璃面板样式
-- `assets/js/lightbox.js` - Panel logic and interactions / 面板逻辑和交互
+- `assets/js/lightbox.js` - Panel logic with dynamic viewport / 面板逻辑，动态视口调整
 
 #### 7. Gallery Performance Optimization / 画廊性能优化
 
 Optimized gallery interactions for smoother experience:
-- Removed hover scale effect that caused conflict with PhotoSwipe zoom animation
+- Hover scale effect (1.04x) with faster transition (0.3s)
 - Removed dynamic caption plugin to reduce overhead
 - Changed title attribute to data-title to prevent browser tooltip
-- Simplified hover effect to brightness-only for better performance
+- Optimized transition timing for better performance
 
 优化画廊交互，提升流畅度：
-- 移除悬停放大效果，避免与 PhotoSwipe 缩放动画冲突
+- 悬停放大效果（1.04倍），更快的过渡时间（0.3s）
 - 移除动态标题插件，减少开销
 - 将 title 属性改为 data-title，防止浏览器 tooltip
-- 简化悬停效果为仅变暗，提升性能
+- 优化过渡时间，提升性能
 
 **Files modified / 修改文件:**
-- `assets/css/main.scss` - Simplified hover styles / 简化悬停样式
-- `assets/js/lightbox.js` - Removed caption plugin, optimized panel / 移除标题插件，优化面板
+- `assets/css/main.scss` - Hover styles with faster transition / 悬停样式，更快过渡
+- `assets/js/lightbox.js` - Removed caption plugin / 移除标题插件
 - `layouts/partials/gallery.html` - Changed title to data-title / 将 title 改为 data-title
 
 ---
@@ -232,19 +236,21 @@ remote_images:
 
 全新设计的灯箱信息面板，采用电影感、故事驱动的布局：
 - 故事文字（标题和描述）位于右下角
+- 右侧固定 380px 面板宽度
+- 打开面板时，图片在剩余空间自动居中
 - 磨砂玻璃效果，背景模糊
 - 极简横向元数据显示（相机、镜头、参数、日期）
 - 元数据默认隐藏，悬停时显示
 - 从右侧平滑滑入动画
-- 优化阅读流程和视觉层次
+- 杂志风格排版，装饰性元素
 
 #### 7. 画廊性能优化
 
 优化画廊交互，提升流畅度：
-- 移除悬停放大效果，避免与 PhotoSwipe 缩放动画冲突
+- 悬停放大效果（1.04倍），更快的过渡时间（0.3s）
 - 移除动态标题插件，减少开销
 - 将 title 属性改为 data-title，防止浏览器 tooltip
-- 简化悬停效果为仅变暗，提升性能
+- 优化过渡时间，提升性能
 
 ---
 
