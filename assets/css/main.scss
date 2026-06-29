@@ -359,12 +359,3 @@ html.light .meta-value {
 /* ============================================
    面板打开时图片居中
    ============================================ */
-.pswp--panel-open .pswp__scroll-wrap {
-  left: 0;
-  width: calc(100% - 380px);
-}
-
-.pswp--panel-open .pswp__center {
-  left: 0;
-  width: calc(100% - 380px);
-}
