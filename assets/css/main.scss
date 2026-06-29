@@ -355,3 +355,16 @@ html.light .meta-value {
 .pswp__info-panel.visible .info-story {
   animation: storyReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
 }
+
+/* ============================================
+   面板打开时图片居中
+   ============================================ */
+.pswp--panel-open .pswp__scroll-wrap {
+  left: 0;
+  width: calc(100% - 380px);
+}
+
+.pswp--panel-open .pswp__center {
+  left: 0;
+  width: calc(100% - 380px);
+}

@@ -218,6 +218,11 @@ if (gallery) {
     panelVisible = !panelVisible;
     infoPanel.classList.toggle("visible", panelVisible);
     
+    // 给 PhotoSwipe 容器添加 class 控制布局
+    if (lightbox.pswp && lightbox.pswp.element) {
+      lightbox.pswp.element.classList.toggle("pswp--panel-open", panelVisible);
+    }
+    
     // 动态调整 PhotoSwipe viewport
     if (lightbox.pswp) {
       const pswp = lightbox.pswp;
