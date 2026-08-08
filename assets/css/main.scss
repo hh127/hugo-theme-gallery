@@ -72,7 +72,7 @@ img.lazyload:not([src]) {
     rgba(0, 0, 0, 0.3) 60%,
     transparent 100%
   );
-  color: #ffffff;
+  color: #fff;
   transform: translateY(100%);
   opacity: 0;
   transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
@@ -192,11 +192,11 @@ html.light .gallery-caption .caption-camera {
 .info-title {
   font-size: 2rem;
   font-weight: 300;
-  color: #ffffff;
+  color: #fff;
   margin: 0;
   line-height: 1.15;
   letter-spacing: -0.04em;
-  font-family: "Georgia", "Times New Roman", serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 
 /* 描述包装器 */
@@ -212,7 +212,7 @@ html.light .gallery-caption .caption-camera {
   line-height: 1.8;
   font-style: italic;
   letter-spacing: 0.01em;
-  font-family: "Georgia", "Times New Roman", serif;
+  font-family: Georgia, "Times New Roman", serif;
 }
 
 /* 元数据区域 - 底部精致小字 */
@@ -345,6 +345,7 @@ html.light .meta-value {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

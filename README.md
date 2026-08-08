@@ -34,7 +34,7 @@ Display camera metadata (EXIF data) for photos in a stylish panel. Shows camera 
 在照片下方展示相机元数据（EXIF 信息），支持相机型号、镜头、光圈、快门速度、ISO、焦距等拍摄参数。
 
 **Files added / 新增文件:**
-- `assets/css/exif-panel.css` - Panel styling / 面板样式
+- 样式已并入 `assets/css/main.scss`（信息面板样式）
 
 #### 2. Password Protection / 密码保护
 

@@ -7,6 +7,14 @@
     "media-feature-range-notation": "prefix",
     "property-no-vendor-prefix": null,
     "function-name-case": null,
-    "no-descending-specificity": null
+    "no-descending-specificity": null,
+    "selector-class-pattern": [
+      "^(pswp|pswp__|pswp__button--)[a-zA-Z0-9_-]+$|^[a-z][a-zA-Z0-9_-]*$",
+      {
+        "resolveNestedSelectors": true,
+        "message": "PhotoSwipe 类名 (pswp__) 及 BEM/camelCase 类名豁免"
+      }
+    ],
+    "keyframes-name-pattern": "^[a-zA-Z][a-zA-Z0-9_-]*$"
   }
 }
