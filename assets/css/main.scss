@@ -371,6 +371,40 @@ html.light .meta-value {
    收藏功能
    ============================================ */
 
+/* 灯箱右上角图标视觉大小统一 (精确 20x20) + 中心对齐
+   PhotoSwipe 内置图标 (download/zoom/close) 的 SVG path 偏小且宽高比不同,
+   transform-box: fill-box 以图标自身中心为原点;
+   translate 将各图标中心平移到 viewBox 中心 (16,16) 保证垂直居中;
+   .pswp__icn-shadow 是 outlineID 生成的描边克隆, 必须与 path 同步 transform 防重影 */
+.pswp__button .pswp__icn path,
+.pswp__button .pswp__icn-shadow {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.pswp__button--download-button .pswp__icn path,
+.pswp__button--download-button .pswp__icn-shadow {
+  transform: translate(0, -1.5px) scale(1.43, 1.33); /* 14x15@(9,10) -> 20x20 居中 */
+}
+
+.pswp__button--zoom .pswp__icn path {
+  transform: translate(0.5px, -0.5px) scale(1.33, 1.33); /* 15x15@(8,9) -> 20x20 居中 */
+}
+
+.pswp__button--close .pswp__icn path {
+  transform: translate(0, 0) scale(1.25, 1.25); /* 16x16@(8,8) -> 20x20 居中 */
+}
+
+.pswp__button--favorite .pswp__icn path,
+.pswp__button--favorite .pswp__icn-shadow {
+  transform: translate(4px, 3.8px) scale(1, 1.09); /* 20x18.4@(2,3) -> 20x20 居中 */
+}
+
+.pswp__button--info .pswp__icn path,
+.pswp__button--info .pswp__icn-shadow {
+  transform: translate(4px, 4px); /* 20x20@(2,2) -> 20x20 居中 */
+}
+
 /* 灯箱收藏按钮: 默认空心, 已收藏实心 + 主题色 */
 .pswp__button--favorite svg path {
   fill: none;
