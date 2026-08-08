@@ -274,6 +274,17 @@ html.dark .pswp__info-panel {
 /* ============================================
    浅色主题适配
    ============================================ */
+html.light .pswp {
+  --pswp-bg: #fafafa;
+  --pswp-placeholder-bg: #e8e8e8;
+  --pswp-icon-color: #333;
+  --pswp-icon-color-secondary: #999;
+  --pswp-icon-stroke-color: #999;
+  --pswp-preloader-color: rgba(0, 0, 0, 0.15);
+  --pswp-preloader-color-secondary: rgba(255, 255, 255, 0.9);
+  --pswp-error-text-color: #333;
+}
+
 html.light .pswp__info-panel {
   background: rgba(252, 252, 252, 0.92);
   border-left-color: rgba(0, 0, 0, 0.06);
@@ -281,6 +292,10 @@ html.light .pswp__info-panel {
 
 html.light .info-title {
   color: #1a1a1a;
+}
+
+html.light .info-description {
+  color: rgba(0, 0, 0, 0.6);
 }
 
 html.light .info-title-wrapper::before {
