@@ -5,18 +5,26 @@ const gallery = document.getElementById("gallery");
 
 if (gallery) {
   let containerWidth = 0;
+  let rafId = null;
   const items = gallery.querySelectorAll(".gallery-item");
 
   const aspectRatios = Array.from(items).map((item) => {
     const img = item.querySelector("img");
     img.style.width = "100%";
     img.style.height = "auto";
-    return parseFloat(img.getAttribute("width")) / parseFloat(img.getAttribute("height"));
+    const w = parseFloat(img.getAttribute("width"));
+    const h = parseFloat(img.getAttribute("height"));
+    // 防御: 缺少宽高属性时回退 1:1，避免布局 NaN
+    if (!w || !h) return 1;
+    return w / h;
   });
 
   function updateGallery() {
-    if (containerWidth === gallery.getBoundingClientRect().width) return;
-    containerWidth = gallery.getBoundingClientRect().width;
+    const width = gallery.getBoundingClientRect().width;
+    // 容器不可见（如密码保护未解锁）时跳过，避免 rowWidth=0 布局错误
+    if (width <= 0) return;
+    if (containerWidth === width) return;
+    containerWidth = width;
 
     const layout = justifiedLayout(aspectRatios, {
       rowWidth: containerWidth,
@@ -40,10 +48,18 @@ if (gallery) {
     gallery.style.visibility = "";
   }
 
-  window.addEventListener("resize", updateGallery);
-  window.addEventListener("orientationchange", updateGallery);
+  // rAF 节流: 避免 resize 高频重复计算布局
+  function onResize() {
+    if (rafId) return;
+    rafId = requestAnimationFrame(() => {
+      rafId = null;
+      updateGallery();
+    });
+  }
 
-  // Call twice to adjust for scrollbars appearing after first call
-  updateGallery();
+  window.addEventListener("resize", onResize);
+  window.addEventListener("orientationchange", onResize);
+
+  // 首次调用即可（不可见时 updateGallery 内部会跳过）
   updateGallery();
 }
