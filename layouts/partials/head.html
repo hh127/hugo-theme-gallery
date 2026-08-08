@@ -21,8 +21,6 @@
   {{ partial "opengraph.html" . }}
   {{ $css := resources.Get "/css/main.scss" | toCSS | minify | fingerprint }}
   <link rel="stylesheet" href="{{ $css.RelPermalink }}" />
-  {{ $exifCss := resources.Get "css/exif-panel.css" | minify | fingerprint }}
-  <link rel="stylesheet" href="{{ $exifCss.RelPermalink }}">
   {{ if .Params.password }}
     {{ $passwordCss := resources.Get "css/password-protect.css" | minify | fingerprint }}
     <link rel="stylesheet" href="{{ $passwordCss.RelPermalink }}">

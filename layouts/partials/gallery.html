@@ -183,7 +183,8 @@
 
         {{ if $item.isRemote }}
           {{ $finalFullUrl = $item.remoteUrl }}
-          {{ $finalThumbUrl = printf "%s?x-oss-process=image/resize,w_600" $item.remoteUrl }}
+          {{ $cdnResize := site.Params.gallery.cdnResize | default "?x-oss-process=image/resize,w_600" }}
+          {{ $finalThumbUrl = printf "%s%s" $item.remoteUrl $cdnResize }}
           {{ $finalWidth = $item.Width }}
           {{ $finalHeight = $item.Height }}
           {{ $bgColor = $item.bgColor }}

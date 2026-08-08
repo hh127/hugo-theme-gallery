@@ -108,35 +108,14 @@ function initPasswordProtect() {
 
 // 触发 gallery 重新计算布局
 function triggerGalleryResize() {
+  // 单次 resize 足够，lazysizes 会自行加载可见图片
   setTimeout(() => {
     window.dispatchEvent(new Event('resize'));
-  }, 50);
-  setTimeout(() => {
-    window.dispatchEvent(new Event('resize'));
-  }, 200);
-  setTimeout(() => {
-    window.dispatchEvent(new Event('resize'));
-  }, 500);
-  
-  // 直接加载所有懒加载图片
-  setTimeout(() => {
-    const lazyImages = document.querySelectorAll('img.lazyload[data-src]');
-    lazyImages.forEach(function(img) {
-      const src = img.getAttribute('data-src');
-      if (src) {
-        img.src = src;
-        img.classList.remove('lazyload');
-        img.classList.add('lazyloaded');
-        img.dispatchEvent(new Event('lazyloaded'));
-      }
-    });
-    // 触发 lazysizes 重新检测
+    window.dispatchEvent(new Event('scroll'));
     if (window.lazySizes && typeof window.lazySizes.check === 'function') {
       window.lazySizes.check();
     }
-    window.dispatchEvent(new Event('scroll'));
-    window.dispatchEvent(new Event('resize'));
-  }, 150);
+  }, 50);
 }
 
 // 确保在 DOM 加载完成后初始化

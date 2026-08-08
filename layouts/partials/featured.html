@@ -3,7 +3,7 @@
   {{ if $gallery }}
     {{ $covers := where (.Resources.ByType "image") "Params.cover" "eq" true }}
     {{ $cover := "" }}
-    {{ if ge (len $covers) 0 }}
+    {{ if gt (len $covers) 0 }}
       {{ $cover = index $covers 0 }}
     {{ end }}
     {{ $featured := $cover | default ((.Resources.ByType "image").GetMatch (.Params.featured_image | default "*feature*")) | default (index $gallery.images 0) }}

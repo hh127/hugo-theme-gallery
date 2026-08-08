@@ -1,6 +1,5 @@
 import PhotoSwipeLightbox from "./photoswipe/photoswipe-lightbox.esm.js";
 import PhotoSwipe from "./photoswipe/photoswipe.esm.js";
-import PhotoSwipeDynamicCaption from "./photoswipe/photoswipe-dynamic-caption-plugin.esm.min.js";
 import * as params from "@params";
 
 const gallery = document.getElementById("gallery");
@@ -52,7 +51,7 @@ if (gallery) {
   
   let infoPanel = null;
   let panelVisible = false;
-  let originalViewportWidth = 0;
+  let originalViewportWidth = null;
   
   // 创建信息面板
   function createInfoPanel() {
@@ -104,12 +103,8 @@ if (gallery) {
   function updateInfoPanel(pswp) {
     const el = pswp.currSlide?.data?.element;
     if (!el || !infoPanel) {
-      console.log('updateInfoPanel: no element or panel');
       return;
     }
-    
-    console.log('updateInfoPanel element:', el);
-    console.log('dataset:', el.dataset);
     
     const title = el.dataset.title || el.getAttribute("title") || "";
     const description = el.dataset.description || "";
@@ -120,8 +115,6 @@ if (gallery) {
     const exposure = el.dataset.exposure || "";
     const focal = el.dataset.focal || "";
     const date = el.dataset.date || "";
-    
-    console.log('title:', title, 'description:', description);
     
     // 更新标题
     const titleElement = infoPanel.querySelector(".info-title");
@@ -228,7 +221,7 @@ if (gallery) {
       const pswp = lightbox.pswp;
       
       // 保存原始宽度（只在第一次时保存）
-      if (originalViewportWidth === 0) {
+      if (originalViewportWidth === null) {
         originalViewportWidth = pswp.viewportSize.x;
       }
       
