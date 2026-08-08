@@ -4,8 +4,8 @@ pageNotFound: 页面不存在
 toHomepage: 返回主页
 closeTitle: 关闭
 zoomTitle: 缩放
-arrowPrevTitle: 前一张
-arrowNextTitle: 后一张
+arrowPrevTitle: 上一张
+arrowNextTitle: 下一张
 errorMsg: 照片无法加载
 downloadTitle: 下载
 relatedAlbums: 相关相册
