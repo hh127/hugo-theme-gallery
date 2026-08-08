@@ -10,6 +10,18 @@
       {{ .Site.Title }}
     </a>
   {{ end }}
+  <ul>
+    <li>
+      <button class="btn btn-square" id="theme-toggle" type="button" title="{{ T "toggleTheme" }}" aria-label="{{ T "toggleTheme" }}">
+        <svg class="theme-icon" id="theme-icon-sun" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 3a1 1 0 0 1 1 1v1.5a1 1 0 1 1-2 0V4a1 1 0 0 1 1-1Zm0 13.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM12 1a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V2a1 1 0 0 1 1-1ZM4.22 4.22a1 1 0 0 1 1.42 0l.7.7a1 1 0 1 1-1.42 1.42l-.7-.7a1 1 0 0 1 0-1.42Zm15.56 0a1 1 0 0 1 0 1.42l-.7.7a1 1 0 1 1-1.42-1.42l.7-.7a1 1 0 0 1 1.42 0ZM12 6a6 6 0 1 1 0 12 6 6 0 0 1 0-12Zm0 14a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1ZM4.22 19.78a1 1 0 0 1 0-1.42l.7-.7a1 1 0 1 1 1.42 1.42l-.7.7a1 1 0 0 1-1.42 0Zm15.56 0a1 1 0 0 1-1.42 0l-.7-.7a1 1 0 1 1 1.42-1.42l.7.7a1 1 0 0 1 0 1.42ZM12 17.5A5.5 5.5 0 1 0 12 6.5a5.5 5.5 0 0 0 0 11Z"/>
+      </svg>
+      <svg class="theme-icon hidden" id="theme-icon-moon" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M21.53 15.93A10.54 10.54 0 0 1 8.07 2.47 10.5 10.5 0 1 0 21.53 15.93Zm-1.63.85a8.5 8.5 0 0 1-10.68-10.68 8.5 8.5 0 1 0 10.68 10.68Z"/>
+      </svg>
+    </button>
+  </li>
+  </ul>
   {{ if site.Menus.main }}
     <ul>
       <li>

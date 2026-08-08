@@ -9,6 +9,7 @@ arrowNextTitle: 下一张
 errorMsg: 照片无法加载
 downloadTitle: 下载
 relatedAlbums: 相关相册
+toggleTheme: 切换主题
 photoCount:
   other: "{{ . }} 张照片"
 albumCount:

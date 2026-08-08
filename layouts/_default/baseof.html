@@ -1,7 +1,22 @@
 <!doctype html>
 {{- $theme := .Params.theme | default .Site.Params.defaultTheme }}
-<html class="{{- if (eq $theme "light") -}}light{{- else if (eq $theme "dark") }}dark{{ end }}" lang="{{- site.LanguageCode | default "en" -}}">
-  {{ partial "head.html" . }}
+<html class="{{- if (eq $theme "light") -}}light{{- else }}dark{{ end }}" data-default-theme="{{- if (eq $theme "light") -}}light{{- else }}dark{{ end }}" lang="{{- site.LanguageCode | default "en" -}}">
+  <head>
+    <script>
+      // 防闪烁: 在渲染前应用 localStorage 中保存的主题
+      (function () {
+        try {
+          var stored = localStorage.getItem("gallery-theme");
+          var def = document.documentElement.dataset.defaultTheme || "dark";
+          var theme = stored === "dark" || stored === "light" ? stored : def;
+          var root = document.documentElement;
+          root.classList.toggle("dark", theme === "dark");
+          root.classList.toggle("light", theme === "light");
+        } catch (e) {}
+      })();
+    </script>
+    {{ partial "head.html" . }}
+  </head>
   <body>
     {{ block "header" . }}{{ partial "header.html" . }}{{ end }}
     <main>

@@ -5,21 +5,28 @@
 @import "custom";
 
 /* ============================================
-   懒加载样式
+   懒加载 + LQIP 渐入
    ============================================ */
 .lazyload,
 .lazyloading {
   opacity: 0;
+  filter: blur(10px);
+  transform: scale(1.04);
+  transition: opacity 500ms ease, filter 500ms ease, transform 500ms ease;
 }
 
 .lazyloaded {
   opacity: 1;
-  transition: opacity 300ms;
+  filter: blur(0);
+  transform: scale(1);
+  transition: opacity 500ms ease, filter 500ms ease, transform 500ms ease;
 }
 
 img.lazyload:not([src]) {
   visibility: hidden;
 }
+
+/* 骨架屏占位: figure 背景色已在 HTML 中设置为主色调 */
 
 /* ============================================
    画廊悬停微交互
