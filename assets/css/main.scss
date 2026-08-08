@@ -366,3 +366,153 @@ html.light .meta-value {
 /* ============================================
    面板打开时图片居中
    ============================================ */
+
+/* ============================================
+   收藏功能
+   ============================================ */
+
+/* 灯箱收藏按钮: 默认空心, 已收藏实心 + 主题色 */
+.pswp__button--favorite svg path {
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  transition: fill 0.2s ease;
+}
+
+.pswp__button--favorite.is-favorite svg path {
+  fill: #e5484d;
+  stroke: #e5484d;
+}
+
+/* 收藏页 */
+.favorites-page {
+  min-height: 40vh;
+}
+
+.favorites-loading {
+  color: var(--text-2);
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.favorites-empty {
+  color: var(--text-2);
+  text-align: center;
+  padding: 3rem 1rem;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.favorite-item {
+  position: relative;
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #333;
+  text-decoration: none;
+}
+
+.favorite-item figure {
+  margin: 0;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+}
+
+.favorite-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.favorite-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 2rem 0.75rem 0.6rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  color: #fff;
+  font-size: 0.85rem;
+}
+
+.favorite-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.favorite-camera {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+  flex-shrink: 0;
+}
+
+.favorite-remove {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.favorite-item:hover .favorite-remove {
+  opacity: 1;
+}
+
+.favorite-remove:hover {
+  background: rgba(229, 72, 77, 0.8);
+}
+
+/* 收藏页工具条 (导入导出) */
+.favorites-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.favorites-btn {
+  display: inline-block;
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--text-1);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.favorites-btn:hover {
+  border-color: var(--text-2);
+}
+
+.favorites-msg {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-2);
+}

@@ -1,0 +1,5 @@
+<div id="favorites" class="favorites-page">
+  <p class="favorites-loading">正在加载收藏…</p>
+</div>
+{{ $favJs := resources.Get "js/favorites-page.js" | js.Build (dict "minify" true) | resources.Fingerprint }}
+<script src="{{ $favJs.RelPermalink }}" defer></script>

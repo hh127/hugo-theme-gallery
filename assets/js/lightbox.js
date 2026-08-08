@@ -1,6 +1,7 @@
 import PhotoSwipeLightbox from "./photoswipe/photoswipe-lightbox.esm.js";
 import PhotoSwipe from "./photoswipe/photoswipe.esm.js";
 import * as params from "@params";
+import { getFavorites, toggleFavorite, isFavorite, render } from "./favorites.js";
 
 const gallery = document.getElementById("gallery");
 
@@ -44,6 +45,67 @@ if (gallery) {
       });
     });
   }
+
+  // 收藏按钮
+  lightbox.on("uiRegister", () => {
+    lightbox.pswp.ui.registerElement({
+      name: "favorite-button",
+      order: 9,
+      isButton: true,
+      tagName: "button",
+      html: {
+        isCustomSVG: true,
+        inner: '<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" id="pswp__icn-favorite"/>',
+        outlineID: "pswp__icn-favorite",
+      },
+      onInit: (el, pswp) => {
+        el.setAttribute("title", "收藏 (L)");
+        el.classList.add("pswp__button--favorite");
+
+        // 从当前图片的 element 读取收藏数据
+        function currentFavoriteData() {
+          const el2 = pswp.currSlide?.data?.element;
+          if (!el2) return null;
+          return {
+            src: el2.href,
+            thumb: el2.querySelector("img")?.dataset?.src || "",
+            title: el2.dataset.title || "",
+            description: el2.dataset.description || "",
+            camera: el2.dataset.camera || "",
+            date: el2.dataset.date || "",
+          };
+        }
+
+        function updateState() {
+          const data = currentFavoriteData();
+          const favs = getFavorites();
+          const isFav = data ? favs.some((f) => f.src === data.src) : false;
+          el.classList.toggle("is-favorite", isFav);
+        }
+
+        el.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const data = currentFavoriteData();
+          if (!data) return;
+          toggleFavorite(data);
+          updateState();
+        });
+
+        pswp.on("change", updateState);
+        pswp.on("close", () => {
+          el.classList.remove("is-favorite");
+        });
+      },
+    });
+  });
+
+  // 收藏存取工具 (挂到 window 供收藏页复用)
+  window.galleryFavorites = {
+    get: getFavorites,
+    toggle: toggleFavorite,
+    isFavorite,
+    render,
+  };
 
   // ============================================
   // 右侧信息面板
@@ -329,6 +391,32 @@ if (gallery) {
       case "i":
       case "I":
         toggleInfoPanel();
+        e.preventDefault();
+        break;
+      case "l":
+      case "L":
+        // 收藏当前照片
+        {
+          const el2 = lightbox.pswp.currSlide?.data?.element;
+          if (el2) {
+            const data = {
+              src: el2.href,
+              thumb: el2.querySelector("img")?.dataset?.src || "",
+              title: el2.dataset.title || "",
+              description: el2.dataset.description || "",
+              camera: el2.dataset.camera || "",
+              date: el2.dataset.date || "",
+            };
+            toggleFavorite(data);
+            // 刷新按钮状态
+            const favBtn = lightbox.pswp.element?.querySelector(
+              ".pswp__button--favorite"
+            );
+            if (favBtn) {
+              favBtn.classList.toggle("is-favorite", isFavorite(data.src));
+            }
+          }
+        }
         e.preventDefault();
         break;
     }
