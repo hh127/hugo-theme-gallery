@@ -212,6 +212,11 @@ html.light .gallery-caption .caption-camera {
   font-variant-numeric: tabular-nums;
 }
 
+/* 隐藏 PhotoSwipe 自带左上角计数器 (面板内已有 info-index, 避免重复) */
+.pswp__counter {
+  display: none;
+}
+
 /* 故事区域 - 右下角 */
 .info-story {
   margin-top: auto;
@@ -226,16 +231,15 @@ html.light .gallery-caption .caption-camera {
   position: relative;
 }
 
-/* 装饰线 - 标题上方 */
+/* 装饰线 - 标题上方 (细长实线) */
 .info-title-wrapper::before {
   content: '';
   position: absolute;
   top: -26px;
   left: 0;
-  width: 52px;
-  height: 2px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.06));
-  border-radius: 2px;
+  width: 150px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.8);
 }
 
 /* 照片标题 - 杂志大标题 */
@@ -330,8 +334,42 @@ html.dark .pswp {
 }
 
 html.dark .pswp__info-panel {
-  background: linear-gradient(180deg, rgba(12, 12, 12, 0.97) 0%, rgba(4, 4, 4, 0.95) 100%);
-  border-left-color: rgba(255, 255, 255, 0.05);
+  background: linear-gradient(180deg, rgba(28, 28, 32, 0.96) 0%, rgba(12, 12, 14, 0.96) 100%);
+  border-left-color: rgba(255, 255, 255, 0.09);
+}
+
+/* 夜间: 面板与灯箱背景拉开层次, 高光条更亮, 文字对比度提升 */
+html.dark .pswp__info-panel::before {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+}
+
+html.dark .info-index-current {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+html.dark .info-index-total {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+html.dark .info-description {
+  color: rgba(255, 255, 255, 0.72);
+  border-left-color: rgba(255, 255, 255, 0.2);
+}
+
+html.dark .info-title-wrapper::before {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+html.dark .meta-icon {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+html.dark .meta-label {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+html.dark .meta-value {
+  color: rgba(255, 255, 255, 0.85);
 }
 
 /* ============================================
@@ -379,7 +417,7 @@ html.light .info-description {
 }
 
 html.light .info-title-wrapper::before {
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.06));
+  background: rgba(0, 0, 0, 0.45);
 }
 
 html.light .info-panel-meta {

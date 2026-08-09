@@ -20,6 +20,9 @@ export function initLightbox() {
   if (document.getElementById("lock-screen") && !gallery.querySelector(".gallery-item")) return;
   window.__lightboxInited = true;
 
+  // 面板可见状态(供 getViewportSizeFn 读取: 面板打开时视口让出 380px)
+  let panelVisible = false;
+
   const lightbox = new PhotoSwipeLightbox({
     gallery,
     children: ".gallery-item",
@@ -33,6 +36,12 @@ export function initLightbox() {
     arrowPrevTitle: params.arrowPrevTitle,
     arrowNextTitle: params.arrowNextTitle,
     errorMsg: params.errorMsg,
+    // 官方扩展点: 自定义视口尺寸(面板打开时减去面板宽度)
+    // 配合 updateSize(force) 走完整布局流程, 避免手动改 viewportSize 导致 slide 错位
+    getViewportSizeFn: () => ({
+      x: document.documentElement.clientWidth - (panelVisible ? 380 : 0),
+      y: document.documentElement.clientHeight,
+    }),
   });
 
   // 下载按钮
@@ -119,8 +128,6 @@ export function initLightbox() {
   // ============================================
 
   let infoPanel = null;
-  let panelVisible = false;
-  let originalViewportWidth = null;
 
   // 创建信息面板
   function createInfoPanel() {
@@ -304,34 +311,18 @@ export function initLightbox() {
       lightbox.pswp.element.classList.toggle("pswp--panel-open", panelVisible);
     }
 
-    // 动态调整 PhotoSwipe viewport
+    // 官方方式: 强制重算视口(getViewportSizeFn 返回 全宽-380 或 全宽),
+    // updateSize 内部会完整重排 mainScroll 与所有 slide, 修复切换照片时错位
     if (lightbox.pswp) {
       const pswp = lightbox.pswp;
-
-      // 保存原始宽度（只在第一次时保存）
-      if (originalViewportWidth === null) {
-        originalViewportWidth = pswp.viewportSize.x;
+      pswp.updateSize(true);
+      // 兜底: 确保所有已挂载 slide 的图片尺寸一并重算
+      if (pswp.mainScroll && pswp.mainScroll.itemHolders) {
+        pswp.mainScroll.itemHolders.forEach((holder) => {
+          if (holder && holder.slide) holder.slide.resize();
+        });
       }
-
-      const panelWidth = 380;
-
-      if (panelVisible) {
-        // 面板打开：减小视口宽度，图片区域在左侧
-        pswp.viewportSize.x = originalViewportWidth - panelWidth;
-      } else {
-        // 面板关闭：恢复原始宽度
-        pswp.viewportSize.x = originalViewportWidth;
-      }
-
-      // 刷新 mainScroll
-      if (pswp.mainScroll) {
-        pswp.mainScroll.resize();
-      }
-
-      // 刷新当前 slide
-      if (pswp.currSlide) {
-        pswp.currSlide.resize();
-      }
+      if (pswp.currSlide) pswp.currSlide.resize();
     }
 
     if (panelVisible && lightbox.pswp) {
@@ -388,23 +379,13 @@ export function initLightbox() {
 
   lightbox.init();
 
-  // 键盘导航
+  // 自定义键盘快捷键
+  // 注意: ArrowLeft/ArrowRight/Escape 由 PhotoSwipe 内置键盘处理,
+  // 这里若重复监听会导致按一次方向键跳两张照片(双重触发)
   document.addEventListener("keydown", (e) => {
     if (!lightbox.pswp) return;
 
     switch (e.key) {
-      case "ArrowLeft":
-        lightbox.pswp.prev();
-        e.preventDefault();
-        break;
-      case "ArrowRight":
-        lightbox.pswp.next();
-        e.preventDefault();
-        break;
-      case "Escape":
-        lightbox.pswp.close();
-        e.preventDefault();
-        break;
       case "f":
       case "F":
         if (document.fullscreenElement) {
