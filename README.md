@@ -129,6 +129,11 @@ Completely redesigned the lightbox info panel with a cinematic, story-driven lay
 - Metadata hidden by default, reveals on hover
 - Smooth slide-in animation from right
 - Magazine-style typography with decorative elements
+- Photo index (e.g. 03/12) in magazine page-number style / 照片索引（杂志页码风格）
+- Iconized metadata rows (camera / lens / settings / date) / 元数据图标化
+- Radial-gradient backdrop and soft ambient shadow around photos / 背景径向渐变 + 照片环境阴影
+- Loop navigation so both arrows stay visible / 循环浏览，箭头常驻
+- Next arrow shifts left of the panel when it opens (avoids being covered) / 面板打开时 next 箭头移到面板左侧，避免被遮挡
 
 重新设计的灯箱信息面板，采用电影感、故事驱动的布局：
 - 故事文字（标题和描述）位于右下角
@@ -139,6 +144,11 @@ Completely redesigned the lightbox info panel with a cinematic, story-driven lay
 - 元数据默认隐藏，悬停时显示
 - 从右侧平滑滑入
 - 杂志风格排版，带装饰性元素
+- 照片索引（如 03/12），杂志页码风格
+- 元数据图标化（相机 / 镜头 / 参数 / 日期）
+- 背景径向渐变 + 照片四周柔和环境阴影
+- 循环浏览，两个箭头始终可用
+- 面板打开时 next 箭头移到面板左侧，避免被遮挡
 
 **Files modified / 修改文件:**
 - `assets/css/main.scss` - Panel styling with frosted glass / 磨砂玻璃面板样式

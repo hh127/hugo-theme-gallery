@@ -25,6 +25,7 @@ export function initLightbox() {
     children: ".gallery-item",
     showHideAnimationType: "zoom",
     bgOpacity: 1,
+    loop: true, // 循环浏览: 首尾相接, 两个箭头始终可用
     pswpModule: PhotoSwipe,
     imageClickAction: "close",
     closeTitle: params.closeTitle,
@@ -128,6 +129,11 @@ export function initLightbox() {
     infoPanel = document.createElement("div");
     infoPanel.className = "pswp__info-panel";
     infoPanel.innerHTML = `
+      <div class="info-index" aria-hidden="true">
+        <span class="info-index-current">01</span>
+        <span class="info-index-sep">/</span>
+        <span class="info-index-total">01</span>
+      </div>
       <div class="info-story">
         <div class="info-title-wrapper">
           <h3 class="info-title"></h3>
@@ -138,18 +144,22 @@ export function initLightbox() {
       </div>
       <div class="info-panel-meta">
         <div class="meta-item info-camera-section">
+          <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l1.5 2H20a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h3.5L9 3z"/><circle cx="12" cy="13" r="4"/></svg>
           <span class="meta-label">CAMERA</span>
           <span class="meta-value info-camera"></span>
         </div>
         <div class="meta-item info-lens-section">
+          <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>
           <span class="meta-label">LENS</span>
           <span class="meta-value info-lens"></span>
         </div>
         <div class="meta-item info-settings-section">
+          <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/></svg>
           <span class="meta-label">SETTINGS</span>
           <span class="meta-value info-settings"></span>
         </div>
         <div class="meta-item info-date-section">
+          <svg class="meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
           <span class="meta-label">DATE</span>
           <span class="meta-value info-date"></span>
         </div>
@@ -172,6 +182,16 @@ export function initLightbox() {
     const el = pswp.currSlide?.data?.element;
     if (!el || !infoPanel) {
       return;
+    }
+
+    // 更新照片索引 (当前 / 总数)
+    const indexCurrent = infoPanel.querySelector(".info-index-current");
+    const indexTotal = infoPanel.querySelector(".info-index-total");
+    if (indexCurrent) {
+      indexCurrent.textContent = String(pswp.currIndex + 1).padStart(2, "0");
+    }
+    if (indexTotal) {
+      indexTotal.textContent = String(pswp.getNumItems()).padStart(2, "0");
     }
 
     const title = el.dataset.title || el.getAttribute("title") || "";
