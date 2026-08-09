@@ -163,6 +163,25 @@ Optimized gallery interactions for smoother experience:
 - `assets/js/lightbox.js` - Removed caption plugin / 移除标题插件
 - `layouts/partials/gallery.html` - Changed title to data-title / 将 title 改为 data-title
 
+#### 8. Stealth Album / 隐秘相册
+
+Hidden album accessible only through a secret easter-egg entry, combined with password protection:
+- Trigger: click the site title (logo) in the header 5 times quickly / 触发方式：连点站点标题 5 次
+- A minimal password prompt appears; correct password redirects to the hidden album / 弹出极简密码框，密码正确后跳转隐秘相册
+- Wrong password gives no feedback at all — the album's existence stays hidden / 密码错误无任何反馈，不暴露隐秘相册的存在
+- Album is fully invisible: excluded from homepage, sitemap, RSS, related albums, and marked `noindex` / 完全不可见：首页、sitemap、RSS、相关推荐全部排除，并标记 noindex
+- Content encrypted with AES-256-GCM on build (reuses the password-protection pipeline) / 内容构建时 AES-256-GCM 加密（复用现有密码保护管线）
+- Works on mobile, tablet and desktop (tap / click) / 兼容手机、平板、电脑（触摸/鼠标点击）
+
+**Usage / 使用方式:**
+1. Create an album with `private: true` and a `password` in front matter, e.g. `content/vault-xxxxx/index.md` / 创建相册并设置 `private: true` 和 `password`（目录名用随机字符串）
+2. Set the album path in `assets/js/stealth.js` (`CONFIG.albumPath`) / 在 `assets/js/stealth.js` 的 `CONFIG.albumPath` 填写相册路径
+3. Adjust click count if desired (`CONFIG.clicks`) / 可按需调整触发次数（`CONFIG.clicks`）
+
+**Files added / 新增文件:**
+- `assets/js/stealth.js` - Easter-egg entry, password verification, auto-unlock / 彩蛋入口、密码验证、自动解锁
+- `assets/js/main.js` - Import stealth.js / 引入 stealth.js
+
 ---
 
 ## 中文说明
@@ -249,8 +268,27 @@ remote_images:
 优化画廊交互，提升流畅度：
 - 悬停放大（1.04 倍），过渡更快（0.3s）
 - 移除动态标题插件，降低开销
-- 将 title 属性改为 data-title，避免浏览器 tooltip
+- 将 title 改为 data-title，避免浏览器 tooltip
 - 优化过渡时机，提升性能
+
+#### 8. 隐秘相册
+
+只能通过隐秘彩蛋入口 + 密码访问的隐藏相册：
+- 触发方式：快速连点页面顶部站点标题 5 次
+- 弹出极简密码框，密码正确后自动跳转隐秘相册
+- 密码错误无任何反馈，不暴露隐秘相册的存在
+- 完全不可见：首页、sitemap、RSS、相关推荐全部排除，并标记 noindex
+- 内容构建时 AES-256-GCM 加密（复用现有密码保护管线）
+- 兼容手机、平板、电脑（触摸/鼠标点击）
+
+**使用方式：**
+1. 创建相册并设置 `private: true` 和 `password`（目录名用随机字符串，如 `content/vault-xxxxx/`）
+2. 在 `assets/js/stealth.js` 的 `CONFIG.albumPath` 填写相册路径
+3. 可按需调整触发次数（`CONFIG.clicks`）
+
+**新增文件：**
+- `assets/js/stealth.js` - 彩蛋入口、密码验证、自动解锁
+- `assets/js/main.js` - 引入 stealth.js
 
 ---
 
