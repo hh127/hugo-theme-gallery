@@ -5,7 +5,21 @@ import { getFavorites, toggleFavorite, isFavorite, render } from "./favorites.js
 
 const gallery = document.getElementById("gallery");
 
-if (gallery) {
+// 收藏存取工具 (挂到 window 供收藏页复用) — 无论是否受保护都暴露
+window.galleryFavorites = {
+  get: getFavorites,
+  toggle: toggleFavorite,
+  isFavorite,
+  render,
+};
+
+export function initLightbox() {
+  if (!gallery) return;
+  if (window.__lightboxInited) return;
+  // 受保护页面且尚未解密时延迟初始化（密码解锁注入图片后由 password-protect.js 重新调用）
+  if (document.getElementById("lock-screen") && !gallery.querySelector(".gallery-item")) return;
+  window.__lightboxInited = true;
+
   const lightbox = new PhotoSwipeLightbox({
     gallery,
     children: ".gallery-item",
@@ -99,26 +113,18 @@ if (gallery) {
     });
   });
 
-  // 收藏存取工具 (挂到 window 供收藏页复用)
-  window.galleryFavorites = {
-    get: getFavorites,
-    toggle: toggleFavorite,
-    isFavorite,
-    render,
-  };
-
   // ============================================
   // 右侧信息面板
   // ============================================
-  
+
   let infoPanel = null;
   let panelVisible = false;
   let originalViewportWidth = null;
-  
+
   // 创建信息面板
   function createInfoPanel() {
     if (infoPanel) return infoPanel;
-    
+
     infoPanel = document.createElement("div");
     infoPanel.className = "pswp__info-panel";
     infoPanel.innerHTML = `
@@ -150,24 +156,24 @@ if (gallery) {
       </div>
     `;
     document.body.appendChild(infoPanel);
-    
+
     // 点击面板外关闭
     infoPanel.addEventListener("click", (e) => {
       if (e.target === infoPanel) {
         toggleInfoPanel();
       }
     });
-    
+
     return infoPanel;
   }
-  
+
   // 更新面板内容
   function updateInfoPanel(pswp) {
     const el = pswp.currSlide?.data?.element;
     if (!el || !infoPanel) {
       return;
     }
-    
+
     const title = el.dataset.title || el.getAttribute("title") || "";
     const description = el.dataset.description || "";
     const camera = el.dataset.camera || "";
@@ -177,7 +183,7 @@ if (gallery) {
     const exposure = el.dataset.exposure || "";
     const focal = el.dataset.focal || "";
     const date = el.dataset.date || "";
-    
+
     // 更新标题
     const titleElement = infoPanel.querySelector(".info-title");
     if (title) {
@@ -186,7 +192,7 @@ if (gallery) {
     } else {
       infoPanel.querySelector(".info-title-wrapper").style.display = "none";
     }
-    
+
     // 更新描述
     const descWrapper = infoPanel.querySelector(".info-description-wrapper");
     const descElement = infoPanel.querySelector(".info-description");
@@ -196,10 +202,10 @@ if (gallery) {
     } else {
       descWrapper.style.display = "none";
     }
-    
+
     // 检查是否有参数信息
     let hasParams = false;
-    
+
     // 更新镜头信息
     const lensSection = infoPanel.querySelector(".info-lens-section");
     const lensValue = infoPanel.querySelector(".info-lens");
@@ -210,7 +216,7 @@ if (gallery) {
     } else {
       lensSection.style.display = "none";
     }
-    
+
     // 更新参数信息
     const settingsSection = infoPanel.querySelector(".info-settings-section");
     const settingsValue = infoPanel.querySelector(".info-settings");
@@ -219,7 +225,7 @@ if (gallery) {
     if (exposure) settings.push(exposure);
     if (iso) settings.push(iso);
     if (focal && focal !== "0 mm") settings.push(focal);
-    
+
     if (settings.length > 0) {
       settingsValue.textContent = settings.join("  ·  ");
       settingsSection.style.display = "flex";
@@ -227,7 +233,7 @@ if (gallery) {
     } else {
       settingsSection.style.display = "none";
     }
-    
+
     // 更新日期
     const dateSection = infoPanel.querySelector(".info-date-section");
     const dateValue = infoPanel.querySelector(".info-date");
@@ -238,7 +244,7 @@ if (gallery) {
     } else {
       dateSection.style.display = "none";
     }
-    
+
     // 相机部分
     const cameraSection = infoPanel.querySelector(".info-camera-section");
     const cameraValue = infoPanel.querySelector(".info-camera");
@@ -249,7 +255,7 @@ if (gallery) {
     } else {
       cameraSection.style.display = "none";
     }
-    
+
     // 根据是否有参数来显示/隐藏整个参数区域
     const metaPanel = infoPanel.querySelector(".info-panel-meta");
     if (hasParams) {
@@ -257,7 +263,7 @@ if (gallery) {
     } else {
       metaPanel.style.display = "none";
     }
-    
+
     // 根据是否有故事文本来调整面板位置
     const storyPanel = infoPanel.querySelector(".info-story");
     if (title || description) {
@@ -266,29 +272,29 @@ if (gallery) {
       storyPanel.style.display = "none";
     }
   }
-  
+
   // 切换面板显示
   function toggleInfoPanel() {
     createInfoPanel();
     panelVisible = !panelVisible;
     infoPanel.classList.toggle("visible", panelVisible);
-    
+
     // 给 PhotoSwipe 容器添加 class 控制布局
     if (lightbox.pswp && lightbox.pswp.element) {
       lightbox.pswp.element.classList.toggle("pswp--panel-open", panelVisible);
     }
-    
+
     // 动态调整 PhotoSwipe viewport
     if (lightbox.pswp) {
       const pswp = lightbox.pswp;
-      
+
       // 保存原始宽度（只在第一次时保存）
       if (originalViewportWidth === null) {
         originalViewportWidth = pswp.viewportSize.x;
       }
-      
+
       const panelWidth = 380;
-      
+
       if (panelVisible) {
         // 面板打开：减小视口宽度，图片区域在左侧
         pswp.viewportSize.x = originalViewportWidth - panelWidth;
@@ -296,23 +302,23 @@ if (gallery) {
         // 面板关闭：恢复原始宽度
         pswp.viewportSize.x = originalViewportWidth;
       }
-      
+
       // 刷新 mainScroll
       if (pswp.mainScroll) {
         pswp.mainScroll.resize();
       }
-      
+
       // 刷新当前 slide
       if (pswp.currSlide) {
         pswp.currSlide.resize();
       }
     }
-    
+
     if (panelVisible && lightbox.pswp) {
       updateInfoPanel(lightbox.pswp);
     }
   }
-  
+
   // 注册信息按钮
   lightbox.on("uiRegister", () => {
     lightbox.pswp.ui.registerElement({
@@ -328,18 +334,18 @@ if (gallery) {
       onInit: (el, pswp) => {
         el.setAttribute("title", "照片信息 (I)");
         el.classList.add("pswp__button--info");
-        
+
         el.addEventListener("click", (e) => {
           e.stopPropagation();
           toggleInfoPanel();
         });
-        
+
         pswp.on("change", () => {
           if (panelVisible) {
             updateInfoPanel(pswp);
           }
         });
-        
+
         pswp.on("close", () => {
           panelVisible = false;
           if (infoPanel) {
@@ -365,7 +371,7 @@ if (gallery) {
   // 键盘导航
   document.addEventListener("keydown", (e) => {
     if (!lightbox.pswp) return;
-    
+
     switch (e.key) {
       case "ArrowLeft":
         lightbox.pswp.prev();
@@ -409,9 +415,7 @@ if (gallery) {
             };
             toggleFavorite(data);
             // 刷新按钮状态
-            const favBtn = lightbox.pswp.element?.querySelector(
-              ".pswp__button--favorite"
-            );
+            const favBtn = lightbox.pswp.element?.querySelector(".pswp__button--favorite");
             if (favBtn) {
               favBtn.classList.toggle("is-favorite", isFavorite(data.src));
             }
@@ -434,3 +438,7 @@ if (gallery) {
     }
   }
 }
+
+window.lightboxApi = { initLightbox };
+
+initLightbox();
