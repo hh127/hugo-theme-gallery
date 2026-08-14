@@ -6,10 +6,15 @@
 // 说明: 本脚本与主题密码保护(password-protect.js)协作。
 // 输入正确密码后, 本地派生 AES 密钥并存入 sessionStorage,
 // 跳转相册页后由 password-protect.js 的会话恢复逻辑自动解锁, 无需二次输入。
+//
+// 隐秘相册路径由 hugo.toml 的 params.gallery.vaultPath 注入(见 head.html),
+// 修改相册目录时只需同步配置, 无需改此文件。
+
+import * as params from "@params";
 
 const CONFIG = {
-  // 隐秘相册 URL(随机 slug, 不可猜测; 修改相册目录后需同步此值)
-  albumPath: "/vault-" + "3c83d8e7" + "/",
+  // 隐秘相册 URL(随机 slug, 不可猜测); 由构建参数注入, 缺省回退硬编码
+  albumPath: params.vaultPath || "/vault-" + "3c83d8e7" + "/",
   // 连点触发次数
   clicks: 5,
   // 两次点击最大间隔(ms), 超过则计数重置
