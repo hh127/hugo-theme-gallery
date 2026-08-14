@@ -74,9 +74,11 @@
         
         {{/* 从 Hugo EXIF 读取标题（备选） */}}
         {{ if not $title }}
-          {{ with $image.Exif }}
-            {{ with .Tags.ImageDescription }}
-              {{ $title = . }}
+          {{ with $image.Meta }}
+            {{ with .Exif }}
+              {{ with .Tags.ImageDescription }}
+                {{ $title = . }}
+              {{ end }}
             {{ end }}
           {{ end }}
         {{ end }}
@@ -134,15 +136,17 @@
 
             {{/* 自动读取远程图片的 EXIF（备选） */}}
             {{ if not $camera }}
-              {{ with $remoteRes.Exif }}
-                {{ with .Tags.ImageDescription }}{{ $title = . }}{{ end }}
-                {{ with .Tags.Model }}{{ $camera = . }}{{ end }}
-                {{ with .Tags.LensModel }}{{ $lens = . }}{{ end }}
-                {{ with .Tags.ISOSpeedRatings }}{{ $iso = . }}{{ end }}
-                {{ with .Tags.FNumber }}{{ $aperture = printf "f/%.1f" . }}{{ end }}
-                {{ with .Tags.ExposureTime }}{{ $exposure = printf "1/%d" (int (div 1 .)) }}{{ end }}
-                {{ with .Tags.FocalLength }}{{ $focalLength = printf "%.0fmm" . }}{{ end }}
-                {{ with .Date }}{{ $date = .Format "2006-01-02 15:04" }}{{ end }}
+              {{ with $remoteRes.Meta }}
+                {{ with .Exif }}
+                  {{ with .Tags.ImageDescription }}{{ $title = . }}{{ end }}
+                  {{ with .Tags.Model }}{{ $camera = . }}{{ end }}
+                  {{ with .Tags.LensModel }}{{ $lens = . }}{{ end }}
+                  {{ with .Tags.ISOSpeedRatings }}{{ $iso = . }}{{ end }}
+                  {{ with .Tags.FNumber }}{{ $aperture = printf "f/%.1f" . }}{{ end }}
+                  {{ with .Tags.ExposureTime }}{{ $exposure = printf "1/%d" (int (div 1 .)) }}{{ end }}
+                  {{ with .Tags.FocalLength }}{{ $focalLength = printf "%.0fmm" . }}{{ end }}
+                  {{ with .Date }}{{ $date = .Format "2006-01-02 15:04" }}{{ end }}
+                {{ end }}
               {{ end }}
             {{ end }}
 
