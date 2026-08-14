@@ -1,0 +1,19 @@
+{{/* 游记列表卡片：可选封面 + 日期 + 标题 + 摘要 */}}
+{{ $page := . }}
+{{ $cover := partial "story-image.html" (dict "page" $page "src" ($page.Params.cover | default "") "from" ($page.Params.cover_from | default "") "size" "600x600") }}
+<a class="story-card" href="{{ $page.RelPermalink }}">
+  {{ if $cover.ok }}
+    <figure class="story-card__cover" style="background-color: {{ $cover.color }}">
+      <img class="lazyload" width="{{ $cover.w }}" height="{{ $cover.h }}" data-src="{{ $cover.full.RelPermalink }}" alt="{{ $page.Title }}" />
+    </figure>
+  {{ end }}
+  <div class="story-card__body">
+    {{ with $page.Date }}
+      <time class="story-card__date" datetime="{{ .Format "2006-01-02" }}">{{ .Format "2006-01-02" }}</time>
+    {{ end }}
+    <h2 class="story-card__title">{{ $page.Title }}</h2>
+    {{ with $page.Params.description }}
+      <p class="story-card__desc">{{ . | markdownify }}</p>
+    {{ end }}
+  </div>
+</a>

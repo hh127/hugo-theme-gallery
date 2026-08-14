@@ -1,0 +1,222 @@
+/* ============================================
+   图文游记 / 照片故事 (story) — 杂志风格
+   ============================================ */
+
+:root {
+  --font-serif: georgia, "Times New Roman", "Songti SC", "Noto Serif CJK SC", "Noto Serif SC", serif;
+}
+
+/* 游记正文容器 */
+.story {
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 0 1.5rem 4rem;
+  color: var(--text-1);
+}
+
+/* 标题区 */
+.story-header {
+  margin: 1rem 0 3.5rem;
+
+  &__rule {
+    width: 64px;
+    height: 1px;
+    margin-bottom: 2rem;
+    background: var(--text-2);
+  }
+
+  &__date {
+    display: block;
+    margin-bottom: 1rem;
+    color: var(--text-2);
+    font-family: var(--font-serif);
+    font-size: 0.8125rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__title {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(2rem, calc(1.667rem + 1.481vw), 2.75rem);
+    line-height: 1.3;
+    letter-spacing: 0.02em;
+    text-wrap: balance;
+  }
+
+  &__desc {
+    margin-top: 1.25rem;
+    color: var(--text-2);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+}
+
+/* 正文 */
+.story-body {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.9;
+
+  p {
+    margin-top: 1.4em;
+    margin-bottom: 1.4em;
+  }
+
+  h2,
+  h3,
+  h4 {
+    margin-top: 2em;
+    margin-bottom: 0.75em;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  h2 {
+    font-size: 1.4em;
+  }
+
+  h3 {
+    font-size: 1.2em;
+  }
+
+  a {
+    color: var(--text-1);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  blockquote {
+    margin: 2em 0;
+    padding: 0.25em 0 0.25em 1.5em;
+    border-left: 2px solid var(--border);
+    color: var(--text-2);
+    font-style: italic;
+  }
+
+  /* 首字下沉 */
+  > p:first-of-type::first-letter {
+    float: left;
+    margin: 0.08em 0.12em 0 0;
+    color: var(--text-1);
+    font-weight: 400;
+    font-size: 3.4em;
+    line-height: 0.85;
+  }
+}
+
+/* 大图 */
+.story-photo {
+  margin: 3rem auto;
+  max-width: 1024px;
+
+  &__frame {
+    display: block;
+    overflow: hidden;
+    background: var(--surface-2);
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  figcaption {
+    margin-top: 1rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--border);
+    color: var(--text-2);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  &--wide {
+    max-width: 1280px;
+  }
+}
+
+/* 游记列表页 */
+section.stories {
+  display: flex;
+  flex-direction: column;
+  max-width: 768px;
+  margin: 0 auto;
+}
+
+.story-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--border);
+  color: inherit;
+  text-decoration: none;
+
+  &:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  &__cover {
+    margin: 0;
+    border-radius: 0.25rem;
+    overflow: hidden;
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 3 / 2;
+      object-fit: cover;
+    }
+  }
+
+  &__date {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-2);
+    font-family: var(--font-serif);
+    font-size: 0.8125rem;
+    letter-spacing: 0.15em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__title {
+    margin: 0;
+    color: var(--text-1);
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 1.5rem;
+    line-height: 1.35;
+  }
+
+  &__desc {
+    margin: 0.5rem 0 0;
+    color: var(--text-2);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+
+  &:hover &__title {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+    align-items: center;
+
+    &__cover {
+      flex: 0 0 240px;
+    }
+
+    &__body {
+      flex: 1 1 auto;
+    }
+  }
+}

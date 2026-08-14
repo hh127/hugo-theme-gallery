@@ -1,0 +1,13 @@
+{{ define "main" }}
+  {{ partial "title.html" . }}
+  {{ with .Content }}
+    <section class="prose">
+      {{ . }}
+    </section>
+  {{ end }}
+  <section class="stories">
+    {{ range .Pages.ByDate.Reverse }}
+      {{ partial "story-card.html" . }}
+    {{ end }}
+  </section>
+{{ end }}

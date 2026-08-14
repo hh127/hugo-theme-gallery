@@ -1,0 +1,33 @@
+{{/* 图文游记大图 shortcode。
+
+     用法:
+       {{< photo src="foo.jpg" >}}
+       {{< photo src="foo.jpg" caption="图注说明" >}}
+       {{< photo src="foo.jpg" from="panasonic" caption="跨相册引用" >}}
+       {{< photo src="foo.jpg" alt="替代文本" wide="true" >}}
+
+     参数:
+       src     图片文件名（本 bundle 内，或配合 from 从指定相册目录引用）
+       from    可选: 来源相册目录（如 "panasonic"），跨 bundle 引用相册内图片
+       caption 可选: 图注文字（支持 markdown）
+       alt     可选: img 的替代文本（默认取 caption 纯文本）
+       wide    可选: "true" 时图片通栏更宽
+*/}}
+{{ $src := or (.Get "src") (.Get 0) }}
+{{ $from := .Get "from" }}
+{{ $caption := .Get "caption" }}
+{{ $alt := .Get "alt" }}
+{{ $wide := .Get "wide" }}
+
+{{ $img := partial "story-image.html" (dict "page" .Page "src" $src "from" $from "size" "1600x1600") }}
+
+{{ if $img.ok }}
+  <figure class="story-photo{{ if eq $wide "true" }} story-photo--wide{{ end }}">
+    <div class="story-photo__frame" style="background-color: {{ $img.color }}; aspect-ratio: {{ $img.w }} / {{ $img.h }}">
+      <img class="lazyload" width="{{ $img.w }}" height="{{ $img.h }}" data-src="{{ $img.full.RelPermalink }}" alt="{{ $alt | default ($caption | plainify) }}" />
+    </div>
+    {{ with $caption }}
+      <figcaption>{{ . | markdownify }}</figcaption>
+    {{ end }}
+  </figure>
+{{ end }}

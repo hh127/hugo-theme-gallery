@@ -1,0 +1,17 @@
+{{ define "main" }}
+  <article class="story">
+    <header class="story-header">
+      <div class="story-header__rule"></div>
+      {{ with .Date }}
+        <time class="story-header__date" datetime="{{ .Format "2006-01-02" }}">{{ .Format "2006-01-02" }}</time>
+      {{ end }}
+      <h1 class="story-header__title">{{ .Title }}</h1>
+      {{ with .Params.description }}
+        <p class="story-header__desc">{{ . | markdownify }}</p>
+      {{ end }}
+    </header>
+    <div class="story-body">
+      {{ .Content }}
+    </div>
+  </article>
+{{ end }}

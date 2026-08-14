@@ -1,0 +1,48 @@
+{{/* Resolve and process an image for story content (图文游记大图).
+
+     用法:
+       {{ $img := partial "story-image.html" (dict
+            "page" .Page            // 当前页面（用于在本 bundle 内查找图片）
+            "src"  "foo.jpg"        // 图片文件名
+            "from" "panasonic"      // 可选: 从其它内容目录（相册 bundle）查找
+            "size" "1600x1600"      // 可选: 处理目标尺寸, 默认 fit 1600x1600
+          ) }}
+
+     返回 dict:
+       ok    bool     是否找到图片
+       full  resource 处理后的图片资源 (fit)
+       color string   占位主色调 (来自 10x10 缩略图)
+       w, h  int      处理后图片宽高
+*/}}
+{{ $page := .page }}
+{{ $src := .src }}
+{{ $from := .from | default "" }}
+{{ $size := .size | default "1600x1600" }}
+
+{{ $result := dict "ok" false "full" false "color" "transparent" "w" 0 "h" 0 }}
+
+{{ if $src }}
+  {{ $img := false }}
+  {{ if $from }}
+    {{ with site.GetPage $from }}
+      {{ with .Resources.GetMatch $src }}
+        {{ $img = . }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+  {{ if not $img }}
+    {{ with $page.Resources.GetMatch $src }}
+      {{ $img = . }}
+    {{ end }}
+  {{ end }}
+
+  {{ with $img }}
+    {{ $full := .Filter (slice images.AutoOrient (images.Process (printf "fit %s" $size))) }}
+    {{ $thumb := .Filter (slice images.AutoOrient (images.Process "fit 10x10")) }}
+    {{ $result = dict "ok" true "full" $full "color" (index $thumb.Colors 0 | default "transparent") "w" $full.Width "h" $full.Height }}
+  {{ else }}
+    {{ warnf "story-image: 找不到图片 %q (from=%q, page=%s)" $src $from $page.RelPermalink }}
+  {{ end }}
+{{ end }}
+
+{{ return $result }}
