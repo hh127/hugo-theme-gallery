@@ -33,11 +33,11 @@ node tools/admin/server.mjs --root D:/path/to/site   # 显式指定站点根目�
 
 | 标签页 | 能做的事 |
 | --- | --- |
-| **概览** | 相册/图片/体积/游记总数；工具链检测（hugo、node、git、python、exiftool）；待提交文件；站点配置摘要；风险提示（弱口令、原图体积、失效元数据）；右上角可切换**暗色/亮色主题**（会记住选择） |
+| **概览** | 相册/图片/体积/游记总数；工具链检测（hugo、node、git、python、exiftool）；待提交文件；站点配置摘要；风险提示（弱口令、原图占用、失效元数据）；右上角可切换**暗色/亮色主题**（会记住选择） |
 | **相册** | 新建/删除相册；改标题、描述、封面、`featured`、`private`、密码；拖拽上传图片（支持多选）；拖拽排序（自动重命名成 `01-`、`02-` 前缀）；单图编辑标题/描述/相机/镜头/ISO/光圈/快门/焦距/日期、隐藏、设为封面、重命名、删除 |
 | **游记** | 新建/删除游记；编辑标题、日期、摘要、封面（`cover_from` + `cover`）；Markdown 正文 + 短代码；一键插入 `{{< photo >}}` 短代码（下拉选相册和图片，不用手敲文件名）；**右侧实时预览**（自动同步滚动） |
 | **页面** | 编辑 `content/*.md` 单页（首页、关于、收藏等）的标题、描述、正文；**右侧实时预览** |
-| **构建** | 一键构建（EXIF → `hugo --gc --minify` → 加密受保护相册，与 CI 同流程）；单独提取 EXIF / 单独加密；启动/停止 `hugo server` 本地预览并内嵌显示；打开 `public/` 与仓库目录 |
+| **构建** | 一键构建（EXIF → `hugo --gc --minify --cleanDestinationDir` → 加密受保护相册，与 CI 同流程）；单独提取 EXIF / 单独加密；启动/停止 `hugo server` 本地预览并内嵌显示；打开 `public/` 与仓库目录 |
 | **发布** | 查看改动文件、勾选要提交的内容、填提交说明、`提交` 或 `提交并推送`（推送后 GitHub Actions 自动发布到 gh-pages）；查看实时日志 |
 
 右侧「任务输出」面板会实时显示命令输出，长任务可以中途停止。
@@ -70,11 +70,12 @@ node tools/admin/server.mjs --root D:/path/to/site   # 显式指定站点根目�
 ## 和主题数据模型的对应关系（避免踩坑）
 
 - 相册 = `content/<目录>/index.md` + 目录里的图片文件（Hugo page bundle）。
+- **上传原图就行，压缩在构建期自动完成**：站点 `hugo.toml` 的 `[[cascade]] publishResources = false` 让原图不再进 `public/`，相册页只发布模板生成的 WebP（灯箱 `fit 2048x2048 webp q90`、缩略图/相册卡片 `fit 600x600 webp q80`，规格见 `layouts/partials/gallery.html`、`get-gallery.html` 等）。所以上传 5 MB 原图不会让访客多下 5 MB——放 `content/<相册>/` 即可，**不要放 `static/`**（`static/` 里的图原样发布、不压缩）。
 - **图片顺序由文件名决定**（`01-`、`02-` 前缀），front matter 里的 `weight`/`title` 不改变顺序——所以「应用排序」实际是重命名文件，管理台会同时改掉 `images:`/`resources:` 里的 `src`，保持一致。
 - 单图元数据写在 front matter 的 `images:` 列表（按文件名索引；**云端图的 key 就是那条 URL**），显示开关（`hidden`/`cover`）写在 `resources:` 列表的 `params` 里，管理台会自动维护这两处。
-- **密码保护只是把相册页面的图片列表加密**（构建时由 `themes/gallery/scripts/encrypt-protected.mjs` 处理），原图文件仍然可以被直接下载。重要照片不要只靠密码。
+- **密码保护只是把相册页面的图片列表加密**（构建时由 `themes/gallery/scripts/encrypt-protected.mjs` 处理），构建后的图片文件仍然可以被直接下载。重要照片不要只靠密码。
 - 相册加了 `password` **不会**自动 `noindex`、也不会从 sitemap/RSS 里排除（要额外加 `private: true`）。
-- 图片的相机参数来自 `data/exif.json`（`scripts/extract-exif.py` 生成，**需要装 exiftool**）；没装 exiftool 时构建会跳过 EXIF 提取，界面会显示 ✗。
+- 图片的相机参数来自 `data/exif.json`（`scripts/extract-exif.py` 生成，**需要装 exiftool**；支持 `.jpg/.jpeg/.png/.webp/.avif` 源图）；没装 exiftool 时构建会跳过 EXIF 提取，界面会显示 ✗。
 
 ## 安全性
 

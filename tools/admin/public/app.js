@@ -204,7 +204,7 @@ function renderOverview(view) {
   <div class="grid cols-4">
     <div class="card stat"><div class="num">${st.totals.albums}</div><div class="lbl">相册</div></div>
     <div class="card stat"><div class="num">${st.totals.images}</div><div class="lbl">图片</div></div>
-    <div class="card stat"><div class="num">${bytes(st.totals.bytes)}</div><div class="lbl">原图占用</div></div>
+    <div class="card stat"><div class="num">${bytes(st.totals.bytes)}</div><div class="lbl">原图占用（仓库）</div></div>
     <div class="card stat"><div class="num">${st.totals.stories}</div><div class="lbl">游记</div></div>
   </div>
   <div class="grid cols-2">

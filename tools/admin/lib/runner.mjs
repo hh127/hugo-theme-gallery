@@ -267,7 +267,7 @@ export async function runBuild(runner, site, opts = {}) {
     }
     const code = await runner.spawnInto(job, {
       cmd: tools.hugo.path,
-      args: ['--gc', '--minify', '--baseURL', baseURL, '--printPathWarnings'],
+      args: ['--gc', '--minify', '--cleanDestinationDir', '--baseURL', baseURL, '--printPathWarnings'],
       label: `hugo 构建（baseURL=${baseURL}）`,
     });
     if (code !== 0) ok = false;

@@ -284,11 +284,11 @@ export class Site {
     if (typeof obj.password === 'string' && obj.password) {
       if (obj.password.length < 8 || /^(123456|password|admin|000000|111111)$/i.test(obj.password))
         warnings.push('弱口令：请尽快更换，仓库里任何人都能看到');
-      warnings.push('密码保护只挡 URL 列表，图片原图仍可通过直链下载');
+      warnings.push('密码保护只挡 URL 列表，构建后的图片文件仍可通过直链下载');
     }
     if (obj.private === true && typeof obj.password === 'string' && obj.password)
       warnings.push('private 与 password 同时设置：private 已让页面不生成，密码形同虚设');
-    if (bytes > 20 * 1024 * 1024) warnings.push(`原图总体积 ${(bytes / 1048576).toFixed(1)} MB，建议压缩后再上传`);
+    if (bytes > 20 * 1024 * 1024) warnings.push(`原图占用 ${(bytes / 1048576).toFixed(1)} MB（仓库体积；相册页访客下载的是构建生成的 WebP，不受影响）`);
     if (orphanMeta.length) warnings.push(`${orphanMeta.length} 条 images 元数据找不到对应文件`);
     if (remoteImages.length && images.length)
       warnings.push('本地图与远程图混用：首页/相册卡片只统计远程图并只用第一张远程图做封面（主题行为），建议一个相册只用一种来源');
