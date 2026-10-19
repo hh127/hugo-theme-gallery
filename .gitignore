@@ -3,3 +3,6 @@ package-lock.json
 .hugo_build.lock
 exampleSite/assets/jsconfig.json
 .DS_Store
+
+# 管理台（tools/admin）运行时记录的服务进程号
+tools/admin/.admin.pid
