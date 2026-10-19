@@ -194,8 +194,8 @@
           {{ $bgColor = $item.bgColor }}
         {{ else }}
           {{ $image := $item.image }}
-          {{ $thumbnail := $image.Filter (slice images.AutoOrient (images.Process "fit 600x600")) }}
-          {{ $full := $image.Filter (slice images.AutoOrient (images.Process "fit 1600x1600")) }}
+          {{ $thumbnail := $image.Filter (slice images.AutoOrient (images.Process "fit 600x600 webp q80")) }}
+          {{ $full := $image.Filter (slice images.AutoOrient (images.Process "fit 2048x2048 webp q90")) }}
           {{ if $publishResources }}
             {{ $finalFullUrl = $image.RelPermalink }}
           {{ else }}
