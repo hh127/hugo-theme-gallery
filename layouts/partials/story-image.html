@@ -5,7 +5,7 @@
             "page" .Page            // 当前页面（用于在本 bundle 内查找图片）
             "src"  "foo.jpg"        // 图片文件名
             "from" "panasonic"      // 可选: 从其它内容目录（相册 bundle）查找
-            "size" "1600x1600"      // 可选: 处理目标尺寸, 默认 fit 1600x1600
+            "size" "1600x1600"      // 可选: 处理目标尺寸, 默认 fit 1600x1600（输出 WebP q90）
           ) }}
 
      返回 dict:
@@ -37,7 +37,7 @@
   {{ end }}
 
   {{ with $img }}
-    {{ $full := .Filter (slice images.AutoOrient (images.Process (printf "fit %s" $size))) }}
+    {{ $full := .Filter (slice images.AutoOrient (images.Process (printf "fit %s webp q90" $size))) }}
     {{ $thumb := .Filter (slice images.AutoOrient (images.Process "fit 10x10")) }}
     {{ $result = dict "ok" true "full" $full "color" (index $thumb.Colors 0 | default "transparent") "w" $full.Width "h" $full.Height }}
   {{ else }}

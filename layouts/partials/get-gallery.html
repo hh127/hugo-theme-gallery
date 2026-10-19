@@ -22,7 +22,7 @@
       {{ $colorThumb := $remoteRes.Filter (slice images.AutoOrient (images.Process "fit 10x10")) }}
       {{ $color = index $colorThumb.Colors 0 | default "#333" }}
       {{/* 使用 remoteRes 作为缩略图 */}}
-      {{ $thumbnail = $remoteRes.Filter (slice images.AutoOrient (images.Process "fit 600x600")) }}
+      {{ $thumbnail = $remoteRes.Filter (slice images.AutoOrient (images.Process "fit 600x600 webp q80")) }}
     {{ else }}
       {{/* 远程图片获取失败，使用占位 */}}
       {{ $thumbnail = dict "RelPermalink" $firstUrl "Width" 600 "Height" 400 }}
@@ -36,7 +36,7 @@
       {{ $cover = index $covers 0 }}
     {{ end }}
     {{ $featured := $cover | default ((.Resources.ByType "image").GetMatch (.Params.featured_image | default "*feature*")) | default (index $localImages 0) }}
-    {{ $thumbnail = $featured.Filter (slice images.AutoOrient (images.Process "fit 600x600")) }}
+    {{ $thumbnail = $featured.Filter (slice images.AutoOrient (images.Process "fit 600x600 webp q80")) }}
     {{ $color = index $thumbnail.Colors 0 | default "transparent" }}
     {{ $imageCount = len $localImages }}
   {{ end }}
